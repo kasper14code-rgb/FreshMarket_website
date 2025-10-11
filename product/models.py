@@ -1,14 +1,13 @@
 from django.db import models
-
 from django.utils.text import slugify
 from django.core.validators import MinValueValidator
 from django.urls import reverse
-
+# Create your models here.
 class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=100, unique=True, blank=True)
+    name = models.CharField(max_length=100 , unique = True)
+    slug = models.SlugField(max_length=100, unique= True, blank=True)
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to='categories/', blank=True, null=True)
+    image = models.ImageField(upload_to= 'categories/', blank=True, null= True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -22,18 +21,18 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-
+    
 class Product(models.Model):
-    UNIT_CHOICES = [
-        ('lb', 'per lb'),
-        ('kg', 'per kg'),
-        ('pcs', 'per piece'),
-        ('bag', 'per bag'),
-        ('box', 'per box'),
-        ('gallon', 'per gallon'),
-        ('liter', 'per liter'),
-        ('dozen', 'per dozen'),
-        ('', 'each'),
+    UNIT_CHOICES =[
+        ('lb','per lb'),
+        ('kg','per kg'),
+        ('pcs','per piece'),
+        ('bag','per bag'),
+        ('box','per box'),
+        ('gallon','per gallon'),
+        ('liter','per liter'),
+        ('dozen','per dozen'),
+        ('','each'),
     ]
 
     name = models.CharField(max_length=200)
@@ -48,7 +47,6 @@ class Product(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
     class Meta:
         ordering = ['-created_at']
         indexes = [
@@ -65,7 +63,7 @@ class Product(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('product:product_detail', kwargs={'slug': self.slug})
+        return reverse('products:product_detail', kwargs={'slug': self.slug})
 
     def get_average_rating(self):
         from reviews.models import Review
