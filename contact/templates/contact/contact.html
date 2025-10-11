@@ -1,0 +1,147 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - FreshMart{% endblock %}
+
+{% block extra_css %}
+<style>
+.contact-section {
+    padding: 4rem 0;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.contact-info {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.contact-item {
+    text-align: center;
+}
+
+.contact-item i {
+    font-size: 2rem;
+    color: var(--primary-green);
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="contact-section container">
+    <h1>Contact Us</h1>
+    <p>Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+
+    <div class="contact-info">
+        <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <h3>Phone</h3>
+            <p>+1 (555) 123-4567</p>
+        </div>
+        <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <h3>Email</h3>
+            <p>info@freshmart.com</p>
+        </div>
+        <div class="contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <h3>Address</h3>
+            <p>123 Fresh Street<br>Green City, GC 12345</p>
+        </div>
+    </div>
+
+    <form method="post" class="contact-form" id="contactForm" novalidate>
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Name *</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <ul class="errorlist">{% for error in form.name.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.email.id_for_label }}">Email *</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <ul class="errorlist">{% for error in form.email.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.phone.id_for_label }}">Phone</label>
+            {{ form.phone }}
+            {% if form.phone.errors %}
+                <ul class="errorlist">{% for error in form.phone.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.subject.id_for_label }}">Subject *</label>
+            {{ form.subject }}
+            {% if form.subject.errors %}
+                <ul class="errorlist">{% for error in form.subject.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.message.id_for_label }}">Message *</label>
+            {{ form.message }}
+            {% if form.message.errors %}
+                <ul class="errorlist">{% for error in form.message.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Send Message</button>
+    </form>
+</section>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+    let isValid = true;
+    const name = document.querySelector('[name="name"]').value.trim();
+    const email = document.querySelector('[name="email"]').value.trim();
+    const message = document.querySelector('[name="message"]').value.trim();
+
+    document.querySelectorAll('.client-error').forEach(el => el.remove());
+
+    if (name.length < 2) {
+        showError('[name="name"]', 'Name must be at least 2 characters');
+        isValid = false;
+    }
+
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        showError('[name="email"]', 'Please enter a valid email');
+        isValid = false;
+    }
+
+    if (message.length < 20) {
+        showError('[name="message"]', 'Message must be at least 20 characters');
+        isValid = false;
+    }
+
+    if (!isValid) e.preventDefault();
+});
+
+function showError(selector, message) {
+    const element = document.querySelector(selector);
+    const error = document.createElement('div');
+    error.className = 'errorlist client-error';
+    error.innerHTML = `<li>${message}</li>`;
+    element.parentNode.appendChild(error);
+}
+</script>
+{% endblock %}
+
+
+
+
+

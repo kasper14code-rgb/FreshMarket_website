@@ -572,6 +572,43 @@ body.dark-mode .product-card:hover {
     align-self: flex-start; /* Align button to the left */
 }
 
+/* Basic styling for contact detail page */
+.message-container {
+    margin-bottom: 20px;
+}
+
+.message {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background-color: #f2f2f2;
+}
+
+.message.user {
+    background-color: #d9e8ff;
+}
+
+.message p {
+    margin: 5px 0;
+}
+
+form {
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: teal;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #006666;
+}
 /* --- Footer --- */
 .footer {
     background-color: var(--card-bg); /* Use card bg for contrast */

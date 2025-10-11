@@ -1,0 +1,30 @@
+{% extends 'home/base.html' %}
+
+{% block title %} Inbox {% endblock %}
+
+{% block content %}
+<h1>Inbox</h1>
+
+<div>
+    {% for contact in contacts %}
+
+    <a href="{% url 'contact:detail' contact.id %}">
+        <div> 
+            <div>
+                <img src="{{ contact.item.image.url }}">
+            </div>
+            
+            <div>
+                {% for member in contact.members.all %}
+
+                    {% if member != request.user%}
+                    <p class="mb-4"><strong>{{ member.username }}</strong> | {{ contact.modified_at}} </p>  
+                    <p> {{ contact.item.name}}</p>                 
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

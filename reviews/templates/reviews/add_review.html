@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Write a Review - {{ product.name }}{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    .review-form-section {
+        padding: 4rem 0;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        font-family: var(--font-secondary);
+        font-size: 0.95rem;
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    }
+    
+    .errorlist {
+        color: #e74c3c;
+        list-style: none;
+        padding: 0;
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+    }
+    
+    .product-preview {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+    
+    .product-preview img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+    
+    .rating-input {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    
+    .rating-input input[type="radio"] {
+        display: none;
+    }
+    
+    .rating-input label {
+        cursor: pointer;
+        font-size: 2rem;
+        color: #ddd;
+        transition: color 0.2s;
+    }
+    
+    .rating-input label:hover,
+    .rating-input label:hover ~ label,
+    .rating-input input[type="radio"]:checked ~ label {
+        color: #FFD700;
+    }
+    </style>
+    {% endblock %}
+    
+    {% block content %}
+    <section class="review-form-section container">
+        <h1>Write a Review</h1>
+        
+        <div class="product-preview">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% endif %}
+            <div>
+                <h3>{{ product.name }}</h3>
+                <p>${{ product.price }}{% if product.unit %} / {{ product.get_unit_display }}{% endif %}</p>
+            </div>
+        </div>
+    
+        <form method="post" novalidate id="reviewForm">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.name.id_for_label }}">Your Name *</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.name.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+    
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Your Email *</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.email.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+    
+            <div class="form-group">
+                <label>Rating *</label>
+                <div class="rating-input">
+                    <input type="radio" name="rating" value="5" id="star5" {% if form.rating.value == 5 %}checked{% endif %}>
+                    <label for="star5"><i class="fas fa-star"></i></label>
+                    <input type="radio" name="rating" value="4" id="star4" {% if form.rating.value == 4 %}checked{% endif %}>
+                    <label for="star4"><i class="fas fa-star"></i></label>
+                    <input type="radio" name="rating" value="3" id="star3" {% if form.rating.value == 3 %}checked{% endif %}>
+                    <label for="star3"><i class="fas fa-star"></i></label>
+                    <input type="radio" name="rating" value="2" id="star2" {% if form.rating.value == 2 %}checked{% endif %}>
+                    <label for="star2"><i class="fas fa-star"></i></label>
+                    <input type="radio" name="rating" value="1" id="star1" {% if form.rating.value == 1 %}checked{% endif %}>
+                    <label for="star1"><i class="fas fa-star"></i></label>
+                </div>
+                {% if form.rating.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.rating.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+    
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">Review Title *</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.title.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+    
+            <div class="form-group">
+                <label for="{{ form.comment.id_for_label }}">Your Review *</label>
+                {{ form.comment }}
+                {% if form.comment.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.comment.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+    
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+            <a href="{% url 'products:product_detail' product.slug %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </section>
+    
+
+<script>
+    // Client-side validation
+    document.getElementById('reviewForm').addEventListener('submit', function(e) {
+        let isValid = true;
+        const name = document.querySelector('[name="name"]').value.trim();
+        const email = document.querySelector('[name="email"]').value.trim();
+        const rating = document.querySelector('[name="rating"]:checked');
+        const title = document.querySelector('[name="title"]').value.trim();
+        const comment = document.querySelector('[name="comment"]').value.trim();
+    
+        // Clear previous errors
+        document.querySelectorAll('.client-error').forEach(el => el.remove());
+    
+        if (name.length < 2) {
+            showError('[name="name"]', 'Name must be at least 2 characters');
+            isValid = false;
+        }
+    
+        if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            showError('[name="email"]', 'Please enter a valid email');
+            isValid = false;
+        }
+    
+        if (!rating) {
+            showError('.rating-input', 'Please select a rating');
+            isValid = false;
+        }
+    
+        if (title.length < 3) {
+            showError('[name="title"]', 'Title must be at least 3 characters');
+            isValid = false;
+        }
+    
+        if (comment.length < 10) {
+            showError('[name="comment"]', 'Review must be at least 10 characters');
+            isValid = false;
+        }
+    
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+    
+    function showError(selector, message) {
+        const element = document.querySelector(selector);
+        const error = document.createElement('div');
+        error.className = 'errorlist client-error';
+        error.innerHTML = `<li>${message}</li>`;
+        element.parentNode.appendChild(error);
+    }
+    </script>
+    {% endblock %}
