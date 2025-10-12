@@ -1,4 +1,4 @@
-{% extends 'home/base.html' %}
+{% comment %} {% extends 'home/base.html' %}
 {% load static %}
 
 {% block title %}Shop All Products - FreshMart{% endblock %}
@@ -61,4 +61,54 @@
         {% endfor %}
     </div>
 </section>
+{% endblock %} {% endcomment %}
+
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Shop - FreshMart{% endblock %}
+
+{% block content %}
+<main>
+  <section class="shop-page container">
+    <h1>Our Products</h1>
+
+    <div class="shop-controls">
+      <div class="filter-control">
+        <label for="category-filter">Filter by Category:</label>
+        <select id="category-filter" name="category">
+          <option value="all">All Categories</option>
+          <option value="fruits">Fruits</option>
+          <option value="vegetables">Vegetables</option>
+          <option value="dairy">Dairy</option>
+          <option value="snacks">Snacks</option>
+          <option value="bakery">Bakery</option>
+        </select>
+      </div>
+
+      <div class="sort-control">
+        <label for="sort-options">Sort by:</label>
+        <select id="sort-options" name="sort">
+          <option value="default">Default</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="name-asc">Name: A-Z</option>
+          <option value="name-desc">Name: Z-A</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="product-grid-shop" class="product-grid">
+      {% for product in products %}
+        <div class="product-card">
+          {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% endif %}
+          <h3>{{ product.name }}</h3>
+          <p>${{ product.price }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+</main>
 {% endblock %}

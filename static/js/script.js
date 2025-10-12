@@ -516,6 +516,57 @@ document.addEventListener('DOMContentLoaded', () => {
          });
      }
 
+    //  Reviews js
+         // Client-side validation
+    document.getElementById('reviewForm').addEventListener('submit', function(e) {
+        let isValid = true;
+        const name = document.querySelector('[name="name"]').value.trim();
+        const email = document.querySelector('[name="email"]').value.trim();
+        const rating = document.querySelector('[name="rating"]:checked');
+        const title = document.querySelector('[name="title"]').value.trim();
+        const comment = document.querySelector('[name="comment"]').value.trim();
+    
+        // Clear previous errors
+        document.querySelectorAll('.client-error').forEach(el => el.remove());
+    
+        if (name.length < 2) {
+            showError('[name="name"]', 'Name must be at least 2 characters');
+            isValid = false;
+        }
+    
+        if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            showError('[name="email"]', 'Please enter a valid email');
+            isValid = false;
+        }
+    
+        if (!rating) {
+            showError('.rating-input', 'Please select a rating');
+            isValid = false;
+        }
+    
+        if (title.length < 3) {
+            showError('[name="title"]', 'Title must be at least 3 characters');
+            isValid = false;
+        }
+    
+        if (comment.length < 10) {
+            showError('[name="comment"]', 'Review must be at least 10 characters');
+            isValid = false;
+        }
+    
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+    
+    function showError(selector, message) {
+        const element = document.querySelector(selector);
+        const error = document.createElement('div');
+        error.className = 'errorlist client-error';
+        error.innerHTML = `<li>${message}</li>`;
+        element.parentNode.appendChild(error);
+    }
+
      // --- Checkout Button Listener ---
      // Note: This listener is attached to the modal container and relies on the button being present when cart not empty
      if (cartActionsDiv && cartModal) { // Check parent exists

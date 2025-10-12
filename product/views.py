@@ -32,7 +32,7 @@ def product_list(request):
         product = product.order_by('-name')
     
     context = {
-        'product': product,
+        'products': products,
         'categories': categories,
         'current_category': category_slug,
         'search_query': search_query,
