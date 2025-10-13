@@ -1,69 +1,5 @@
-{% comment %} {% extends 'home/base.html' %}
-{% load static %}
-
-{% block title %}Shop All Products - FreshMart{% endblock %}
-
-{% block content %}
-<section class="shop-page container">
-    <h1>Our Products</h1>
-
-    <div class="shop-controls">
-        <div class="filter-control">
-            <label for="category-filter">Filter by Category:</label>
-            <select id="category-filter" name="category" onchange="filterProducts()">
-                <option value="all" {% if not current_category %}selected{% endif %}>All Categories</option>
-                {% for category in categories %}
-                <option value="{{ category.slug }}" {% if current_category == category.slug %}selected{% endif %}>
-                    {{ category.name }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="sort-control">
-            <label for="sort-options">Sort by:</label>
-            <select id="sort-options" name="sort" onchange="filterProducts()">
-                <option value="default" {% if sort_by == 'default' %}selected{% endif %}>Default</option>
-                <option value="price-asc" {% if sort_by == 'price-asc' %}selected{% endif %}>Price: Low to High</option>
-                <option value="price-desc" {% if sort_by == 'price-desc' %}selected{% endif %}>Price: High to Low</option>
-                <option value="name-asc" {% if sort_by == 'name-asc' %}selected{% endif %}>Name: A-Z</option>
-                <option value="name-desc" {% if sort_by == 'name-desc' %}selected{% endif %}>Name: Z-A</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="product-grid">
-        {% for product in products %}
-        <div class="product-card" data-category="{{ product.category.slug }}">
-            <a href="{% url 'products:product_detail' product.slug %}">
-                {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                {% else %}
-                <img src="https://via.placeholder.com/300x200?text=No+Image" alt="{{ product.name }}">
-                {% endif %}
-                <h3>{{ product.name }}</h3>
-                <p class="price">${{ product.price }}{% if product.unit %} <span>/ {{ product.get_unit_display }}</span>{% endif %}</p>
-                <div class="rating">
-                    {% with rating=product.get_average_rating %}
-                    {% if rating > 0 %}
-                    <span class="stars">
-                        {% for i in "12345" %}
-                        <i class="fas fa-star{% if forloop.counter > rating %}-o{% endif %}"></i>
-                        {% endfor %}
-                    </span>
-                    <span class="review-count">({{ product.get_review_count }})</span>
-                    {% endif %}
-                    {% endwith %}
-                </div>
-            </a>
-        </div>
-        {% empty %}
-        <p class="no-products">No products found matching your criteria.</p>
-        {% endfor %}
-    </div>
-</section>
-{% endblock %} {% endcomment %}
-
 {% extends 'home/base.html' %}
+
 {% load static %}
 
 {% block title %}Shop - FreshMart{% endblock %}
@@ -99,13 +35,13 @@
     </div>
 
     <div id="product-grid-shop" class="product-grid">
-      {% for product in products %}
+      {% for item in product %}
         <div class="product-card">
-          {% if product.image %}
-          <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% if item.image %}
+          <img src="{{ item.image.url }}" alt="{{ item.name }}">
           {% endif %}
-          <h3>{{ product.name }}</h3>
-          <p>${{ product.price }}</p>
+          <h3>{{ item.name }}</h3>
+          <p>${{ item.price }}</p>
         </div>
       {% endfor %}
     </div>
