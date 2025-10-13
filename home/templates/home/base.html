@@ -17,10 +17,13 @@
     <header class="header">
         <nav class="navbar container">
           <a href="{% url 'home:index' %}" class="logo">FreshMart</a>
-          <form method="get" action="{% url 'home:index' %}" class="search-bar">
-            <input type="text" name="search" placeholder="Search for products..." value="{{ search_query }}"/>
-            <button type="submit"><i class="fas fa-search"></i></button>
-          </form>
+         <a href="{% url 'home:index' %}" class="logo">FreshMart</a>
+            <div class ="search-bar">
+              <form method="get" action="{%url 'product:product_list'%}">
+                <input type="text" name="search"placeholder="Search for products..."value="{{request.GET.search}}">
+                <button type="submit"><i class="fas fa-search"></i></button>
+              </form>
+            </div>
           <ul class="nav-links">
             <li><a href="{% url 'home:index' %}" {% if request.resolver_match.url_name == 'home' %} class="active"{%endif%}>Home</a></li>
             <li><a href="{% url 'product:product_list' %}" {% if request.resolver_match.url_name == 'product_list' %} class="active"{%endif%}>Shop</a></li>
