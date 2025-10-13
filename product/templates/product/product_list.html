@@ -37,8 +37,11 @@
     <div id="product-grid-shop" class="product-grid">
       {% for item in product %}
         <div class="product-card">
+          <a href="{% url 'product:product_detail' item.slug %}">
           {% if item.image %}
           <img src="{{ item.image.url }}" alt="{{ item.name }}">
+          {% else %}
+          <img src="https://via.placeholder.com/300x200?text=No+Image" alt="{{ item.name }}">
           {% endif %}
           <h3>{{ item.name }}</h3>
           <p>${{ item.price }}</p>

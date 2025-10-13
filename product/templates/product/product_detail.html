@@ -1,0 +1,56 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - FreshMart{% endblock %}
+
+{% block content %}
+<section class="product-detail container">
+  <div class="product-detail-card">
+    <div class="product-image">
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+      {% else %}
+        <img src="https://via.placeholder.com/500x400?text=No+Image" alt="{{ product.name }}">
+      {% endif %}
+    </div>
+
+    <div class="product-info">
+      <h1>{{ product.name }}</h1>
+      <p class="price">${{ product.price }}</p>
+
+      {% if product.description %}
+      <p class="description">{{ product.description }}</p>
+      {% endif %}
+
+      <form method="post" action="{% url 'cart:add_to_cart' product.id %}">
+        {% csrf_token %}
+        <label for="quantity">Quantity:</label>
+        <input type="number" name="quantity" id="quantity" value="1" min="1">
+        <button type="submit" class="btn btn-primary">Add to Cart</button>
+      </form>
+
+      {% if average_rating %}
+        <div class="rating">
+          <strong>Average Rating:</strong> {{ average_rating }} ★ ({{ review_count }} reviews)
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="reviews-section">
+    <h2>Customer Reviews</h2>
+    {% if reviews %}
+      {% for review in reviews %}
+        <div class="review">
+          <p><strong>{{ review.user.username }}</strong> rated {{ review.rating }} ★</p>
+          <p>{{ review.comment }}</p>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>No reviews yet.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -42,7 +42,7 @@ class Product(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0.01)])
     unit = models.CharField(max_length=10, choices=UNIT_CHOICES, default='')
-    image = models.ImageField(upload_to='products/')
+    image = models.ImageField(upload_to='product/')
     stock = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     is_bestseller = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

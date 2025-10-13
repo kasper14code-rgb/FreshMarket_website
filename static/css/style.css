@@ -592,9 +592,9 @@ body.dark-mode .product-card:hover {
     margin: 5px 0;
 }
 
-form {
-    margin-top: 20px;
-}
+/* #contactform {
+    margin-top: 5px;
+} */
 
 button {
     padding: 10px 20px;
