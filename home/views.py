@@ -1,5 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render ,redirect
+from .forms import CustomUserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import logout
+from django.contrib.auth import login as auth_login
 from product.models import Product, Category
 from .models import Testimonial
 
@@ -32,8 +36,31 @@ def index(request):
 
 
 def login(request):
-    return render(request, 'home/login.html')
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            auth_login(request, user)
+            return redirect('index')  # change 'index' to wherever you want to send logged-in users
+    else:
+        form = AuthenticationForm()
 
+    return render(request, 'home/login.html', {'form': form})
+
+def signup(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home:login')  # Redirect to login page after signup
+    else:
+        form = CustomUserCreationForm()
+
+    return render(request, 'home/signup.html', {'form': form})
 
 def cart(request):
     return render(request, 'home/cart.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')

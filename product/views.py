@@ -13,12 +13,18 @@ def product_list(request):
         product = product.filter(category__slug=category_slug)
     
     # Search
-    search_query = request.GET.get('search')
+    search_query = request.GET.get('search','')
+    category_slug = request.GET.get('category','')
+    sort_by = request.GET.get('sort','default')
+
     if search_query:
-        products = products.filter(
+        products = product.filter(
             Q(name__icontains=search_query) |
             Q(description__icontains=search_query)
         )
+    
+    if category_slug:
+        products = products.filter(category__slug = category_slug)
     
     # Sorting
     sort_by = request.GET.get('sort', 'default')
