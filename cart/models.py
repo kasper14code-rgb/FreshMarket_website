@@ -30,3 +30,4 @@ class CartItem(models.Model):
 
     class Meta:
         unique_together = ['cart', 'product']
+

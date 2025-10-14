@@ -5,5 +5,4 @@ app_name = 'cart'
 
 urlpatterns = [
     path('cart/',views.cart,name= 'cart' ),
-
 ]
