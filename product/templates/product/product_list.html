@@ -6,10 +6,7 @@
 
 {% block content %}
 <main>
-  <section class="shop-page container">
-    <h1>Our Products</h1>
-
-    <div class="shop-controls">
+   <div class="shop-controls">
       <div class="filter-control">
         <label for="category-filter">Filter by Category:</label>
         <select id="category-filter" name="category">
@@ -34,20 +31,22 @@
       </div>
     </div>
 
-    <div id="product-grid-shop" class="product-grid">
-      {% for item in product %}
-        <div class="product-card">
-          <a href="{% url 'product:product_detail' item.slug %}">
-          {% if item.image %}
-          <img src="{{ item.image.url }}" alt="{{ item.name }}">
-          {% else %}
-          <img src="https://via.placeholder.com/300x200?text=No+Image" alt="{{ item.name }}">
-          {% endif %}
-          <h3>{{ item.name }}</h3>
-          <p>${{ item.price }}</p>
-        </div>
-      {% endfor %}
+  <section class="products container">
+    <h2 class="section-title">Our Products</h2>
+    <div class="product-grid">
+        {% for item in products %}
+            <div class="product-card">
+                <a href="{% url 'product:product_detail' item.slug %}">
+                    <img src="{{ item.image.url }}" alt="{{ item.name }}">
+                    <h3>{{ item.name }}</h3>
+                </a>
+                <p class="price">R{{ item.price }}</p>
+            </div>
+        {% empty %}
+            <p>No products available right now.</p>
+        {% endfor %}
     </div>
-  </section>
+</section>
+
 </main>
 {% endblock %}

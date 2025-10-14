@@ -59,7 +59,7 @@ def signup(request):
     return render(request, 'home/signup.html', {'form': form})
 
 def cart(request):
-    return render(request, 'home/cart.html')
+    return render(request, 'cart/cart_detail.html')
 
 def custom_logout(request):
     logout(request)

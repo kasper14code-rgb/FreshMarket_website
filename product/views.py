@@ -4,47 +4,42 @@ from .models import Product, Category
 from reviews.models import Review
 
 def product_list(request):
-    product = Product.objects.filter(is_active=True)
+    products = Product.objects.filter(is_active=True)  # ✅ Always defined at the start
     categories = Category.objects.all()
-    
+
     # Filter by category
     category_slug = request.GET.get('category')
-    if category_slug:
-        product = product.filter(category__slug=category_slug)
-    
-    # Search
-    search_query = request.GET.get('search','')
-    category_slug = request.GET.get('category','')
-    sort_by = request.GET.get('sort','default')
+    if category_slug and category_slug != "all":
+        products = products.filter(category__slug=category_slug)
 
+    # Search
+    search_query = request.GET.get('search', '')
     if search_query:
-        products = product.filter(
+        products = products.filter(
             Q(name__icontains=search_query) |
             Q(description__icontains=search_query)
         )
-    
-    if category_slug:
-        products = products.filter(category__slug = category_slug)
-    
+
     # Sorting
     sort_by = request.GET.get('sort', 'default')
     if sort_by == 'price-asc':
-        product = product.order_by('price')
+        products = products.order_by('price')
     elif sort_by == 'price-desc':
-        product = product.order_by('-price')
+        products = products.order_by('-price')
     elif sort_by == 'name-asc':
-        product = product.order_by('name')
+        products = products.order_by('name')
     elif sort_by == 'name-desc':
-        product = product.order_by('-name')
-    
+        products = products.order_by('-name')
+
     context = {
-        'product': product,
+        'products': products,          # ✅ Safe to use now
         'categories': categories,
         'current_category': category_slug,
         'search_query': search_query,
         'sort_by': sort_by,
     }
     return render(request, 'product/product_list.html', context)
+
 
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, is_active=True)
@@ -56,4 +51,4 @@ def product_detail(request, slug):
         'average_rating': product.get_average_rating(),
         'review_count': product.get_review_count(),
     }
-    return render(request, 'products/product_detail.html', context)
+    return render(request, 'product/product_detail.html', context)
