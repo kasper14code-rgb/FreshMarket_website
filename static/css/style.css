@@ -201,11 +201,12 @@ body.dark-mode .search-bar input::placeholder {
     justify-content: center;
 }
 
-@media (max-width: 768px) {
+ @media (max-width: 768px) {
     .search-bar {
-        /* Add specific mobile adjustments if needed */
+        flex-wrap: wrap;
+        justify-content: center;
     }
-}
+} 
 
 
 .nav-links {
@@ -1226,9 +1227,9 @@ product-detail-content {
     justify-self: center; /* Center image in its grid cell */
 }
 
-.product-detail-info {
-    /* Container for text content */
-}
+/* .product-detail-info {
+     Container for text content 
+}  */
 
 .product-detail-name {
     font-size: 2rem;
@@ -1262,4 +1263,101 @@ product-detail-content {
 .add-to-cart-from-detail {
     padding: 0.8rem 2rem;
     font-size: 1rem;
+}
+.auth-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 0;
+  background-color: #4CAF50; /* Changed */
+}
+
+.auth-card {
+  background: #ffffff;
+  max-width: 400px;
+  width: 100%;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.auth-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: center;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.auth-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.auth-form label {
+  display: block;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 0.4rem;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-family: 'Nunito', sans-serif;
+  transition: border-color 0.3s;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: #4CAF50; /* Changed */
+}
+
+.form-errors {
+  background-color: #ffe6e6;
+  color: #cc0000;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.btn-primary {
+  display: inline-block;
+  background-color: #4CAF50; /* Changed */
+  color: #fff;
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #45A049; /* Darker green hover */
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 1rem;
+  color: #555;
+}
+
+.auth-switch a {
+  color: #4CAF50; /* Changed */
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
 }

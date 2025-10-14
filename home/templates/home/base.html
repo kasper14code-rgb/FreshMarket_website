@@ -29,8 +29,9 @@
             <li><a href="{% url 'contact:contact' %}" {% if request.resolver_match.url_name == 'contact' %} class="active"{%endif%}>Contact</a></li>
             {% if user.is_authenticated %}
             <li><a href="{% url 'home:my_orders' %}">My Orders</a></li>
-            <li><a href="{% url 'home:login' %}">Logout</a></li>
+            <li><a href="{% url 'home:logout' %}">Logout</a></li>
             {% else %}
+            <li><a href="{% url 'home:signup' %}">Sign Up</a></li>
             <li><a href="{% url 'home:login' %}">Login</a></li>
             {% endif %}
           </ul>
@@ -53,14 +54,14 @@
 
 {% if messages %}
     <div class="messages-container">
-    {% for messages in messages %}
-    <div class="alert alert-{{ messages.tags }}">
-      {{ message }}
-      <button class="close-btn">&times;</button>
+      {% for message in messages %}
+      <div class="alert alert-{{ messages.tags }}">
+        {{ message }}
+        <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
-    </div>
-    {% endif %}
+  {% endif %}
 
   <main>
       {% block content %}{% endblock%}

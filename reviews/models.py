@@ -24,5 +24,5 @@ class Review(models.Model):
             models.Index(fields=['is_approved']),
         ]
 
-        def __str__(self):
+    def __str__(self):
             return f'{self.name} - {self.product.name} ({self.rating}★)'

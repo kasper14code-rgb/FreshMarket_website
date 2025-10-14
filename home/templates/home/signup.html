@@ -1,0 +1,57 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Sign Up - FreshMart{% endblock %}
+
+{% block content %}
+<section class="auth-section container">
+  <div class="auth-card">
+    <h1 class="auth-title">Create Your Account</h1>
+
+    <form method="post" action="." class="auth-form">
+      {% csrf_token %}
+
+      <!-- Username -->
+      <div class="form-group">
+        <label for="{{ form.username.id_for_label }}">Username</label>
+        {{ form.username }}
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="{{ form.email.id_for_label }}">Email</label>
+        {{ form.email }}
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="{{ form.password1.id_for_label }}">Password</label>
+        {{ form.password1 }}
+      </div>
+
+      <!-- Repeat Password -->
+      <div class="form-group">
+        <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+        {{ form.password2 }}
+      </div>
+
+      <!-- Error Messages -->
+      {% if form.errors or form.non_field_errors %}
+      <div class="form-errors">
+        {% for field in form %}
+          {{ field.errors }}
+        {% endfor %}
+        {{ form.non_field_errors }}
+      </div>
+      {% endif %}
+
+      <button type="submit" class="btn-primary w-100">Sign Up</button>
+    </form>
+
+    <p class="auth-switch">
+      Already have an account?
+      <a href="{% url 'home:login' %}">Log in here</a>
+    </p>
+  </div>
+</section>
+{% endblock %}
