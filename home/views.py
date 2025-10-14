@@ -5,7 +5,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import logout
 from django.contrib.auth import login as auth_login
 from product.models import Product, Category
-from .models import Testimonial
+from .models import Review
+from django.contrib import messages
 
 @login_required
 def my_orders(request):
@@ -19,20 +20,22 @@ def index(request):
     bestsellers = Product.objects.filter(is_bestseller=True, is_active=True)[:5]
     products = Product.objects.filter(is_active=True)[:5]
     
-    # Get testimonials and categories
-    testimonials = Testimonial.objects.filter(is_active=True)[:3]
+    
+    reviews = Review.objects.filter(is_approved=True)[:6]
+    
     categories = Category.objects.all()
 
     # Combine into one clean context
     context = {
         'bestsellers': bestsellers,
         'products': products,
-        'testimonials': testimonials,
+        'reviews': reviews,
         'categories': categories,
     }
 
     # Render homepage
     return render(request, 'home/index.html', context)
+
 
 
 def login(request):

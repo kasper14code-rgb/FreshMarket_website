@@ -1,103 +1,133 @@
-{% extends 'base.html' %}
+{% extends 'home/base.html' %}
 {% load static %}
 
-{% block title %}Write a Review - {{ product.name }}{% endblock %}
+{% block title %}Submit a Review - FreshMart{% endblock %}
 
-{% block extra_css %}
-
-{% endblock %}
-    
-    {% block content %}
-    <section class="review-form-section container">
-        <h1>Write a Review</h1>
+{% block content %}
+<div class="container my-5">
+    <div class="review-section">
+        <h2>Submit a Review</h2>
         
-        <div class="product-preview">
-            {% if product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }}">
-            {% endif %}
-            <div>
-                <h3>{{ product.name }}</h3>
-                <p>${{ product.price }}{% if product.unit %} / {{ product.get_unit_display }}{% endif %}</p>
+        <div class="review-content">
+            <!-- Review Form -->
+            <div class="review-form-container">
+                <h3>Share Your Experience</h3>
+                
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="alert alert-success">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                    <div class="alert alert-error">
+                        Please correct the errors below.
+                    </div>
+                    {% endif %}
+                    
+                    <div class="form-group">
+                        <label for="{{ form.name.id_for_label }}">Your Name</label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                        <div class="errorlist">{{ form.name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.email.id_for_label }}">Your Email</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div class="errorlist">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <div class="rating-input">
+                            {% for choice in form.rating %}
+                            {{ choice.tag }}
+                            <label for="{{ choice.id_for_label }}">★</label>
+                            {% endfor %}
+                        </div>
+                        {% if form.rating.errors %}
+                        <div class="errorlist">{{ form.rating.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.title.id_for_label }}">Review Title</label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                        <div class="errorlist">{{ form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.comment.id_for_label }}">Your Review</label>
+                        {{ form.comment }}
+                        {% if form.comment.errors %}
+                        <div class="errorlist">{{ form.comment.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Submit Review</button>
+                    <a href="{% url 'home:index' %}" class="btn btn-secondary" style="margin-top: 10px; display: inline-block; text-align: center;">Cancel</a>
+                </form>
+            </div>
+            
+            <!-- Recent Approved Reviews Display -->
+            <div class="reviews-container">
+                <h3>What Our Customers Say</h3>
+                
+                <div class="reviews-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ average_rating|default:"0.0" }}</div>
+                        <div class="stat-label">Average Rating</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ total_reviews|default:"0" }}</div>
+                        <div class="stat-label">Approved Reviews</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ positive_percentage|default:"0" }}%</div>
+                        <div class="stat-label">Positive Reviews</div>
+                    </div>
+                </div>
+                
+                <div class="reviews-list">
+                    {% if reviews %}
+                        {% for review in reviews %}
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-name">{{ review.name }}</div>
+                                <div class="review-date">{{ review.created_at|date:"M d, Y" }}</div>
+                            </div>
+                            <div class="review-rating">
+                                <span class="stars">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+                                    {% endfor %}
+                                </span> ({{ review.rating }}/5)
+                            </div>
+                            <div class="review-title">{{ review.title }}</div>
+                            <div class="review-content-text">{{ review.comment }}</div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-reviews">No approved reviews yet. Be the first to leave a review!</div>
+                    {% endif %}
+                </div>
+                
+                <div style="text-align: center; margin-top: 1rem;">
+                    <a href="{% url 'reviews:review_list' %}" class="btn btn-primary">View All Reviews</a>
+                </div>
             </div>
         </div>
-    
-        <form method="post" novalidate id="reviewForm">
-            {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="{{ form.name.id_for_label }}">Your Name *</label>
-                {{ form.name }}
-                {% if form.name.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.name.errors %}
-                        <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-    
-            <div class="form-group">
-                <label for="{{ form.email.id_for_label }}">Your Email *</label>
-                {{ form.email }}
-                {% if form.email.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.email.errors %}
-                        <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-    
-            <div class="form-group">
-                <label>Rating *</label>
-                <div class="rating-input">
-                    <input type="radio" name="rating" value="5" id="star5" {% if form.rating.value == 5 %}checked{% endif %}>
-                    <label for="star5"><i class="fas fa-star"></i></label>
-                    <input type="radio" name="rating" value="4" id="star4" {% if form.rating.value == 4 %}checked{% endif %}>
-                    <label for="star4"><i class="fas fa-star"></i></label>
-                    <input type="radio" name="rating" value="3" id="star3" {% if form.rating.value == 3 %}checked{% endif %}>
-                    <label for="star3"><i class="fas fa-star"></i></label>
-                    <input type="radio" name="rating" value="2" id="star2" {% if form.rating.value == 2 %}checked{% endif %}>
-                    <label for="star2"><i class="fas fa-star"></i></label>
-                    <input type="radio" name="rating" value="1" id="star1" {% if form.rating.value == 1 %}checked{% endif %}>
-                    <label for="star1"><i class="fas fa-star"></i></label>
-                </div>
-                {% if form.rating.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.rating.errors %}
-                        <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-    
-            <div class="form-group">
-                <label for="{{ form.title.id_for_label }}">Review Title *</label>
-                {{ form.title }}
-                {% if form.title.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.title.errors %}
-                        <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-    
-            <div class="form-group">
-                <label for="{{ form.comment.id_for_label }}">Your Review *</label>
-                {{ form.comment }}
-                {% if form.comment.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.comment.errors %}
-                        <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-    
-            <button type="submit" class="btn btn-primary">Submit Review</button>
-            <a href="{% url 'products:product_detail' product.slug %}" class="btn btn-secondary">Cancel</a>
-        </form>
-    </section>
-    
-    {% endblock %}
+    </div>
+</div>
+{% endblock %}

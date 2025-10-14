@@ -1,0 +1,59 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Customer Reviews - FreshMart{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="review-section">
+        <h2>Customer Reviews</h2>
+        
+        <div class="reviews-stats">
+            <div class="stat-item">
+                <div class="stat-value">{{ average_rating|default:"0.0" }}</div>
+                <div class="stat-label">Average Rating</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ total_reviews|default:"0" }}</div>
+                <div class="stat-label">Total Reviews</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ positive_percentage|default:"0" }}%</div>
+                <div class="stat-label">Positive Reviews</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <a href="{% url 'reviews:add_review' %}" class="btn btn-primary">Write a Review</a>
+        </div>
+        
+        <div class="reviews-list">
+            {% if reviews %}
+                {% for review in reviews %}
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-name">{{ review.name }}</div>
+                        <div class="review-date">{{ review.created_at|date:"M d, Y" }}</div>
+                    </div>
+                    <div class="review-rating">
+                        <span class="stars">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+                            {% endfor %}
+                        </span> ({{ review.rating }}/5)
+                    </div>
+                    <div class="review-title">{{ review.title }}</div>
+                    <div class="review-content-text">{{ review.content }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-reviews">
+                    <h3>No reviews yet</h3>
+                    <p>Be the first to share your experience!</p>
+                    <a href="{% url 'reviews:add_review' %}" class="btn btn-primary">Write First Review</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{%endblock%}
