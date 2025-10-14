@@ -1,0 +1,238 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}FreshMart Dashboard{% endblock %}
+
+
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-shopping-basket" style="color: #4CAF50; font-size: 28px;"></i>
+            <h1>Fresh<span>Mart</span></h1>
+        </div>
+        <ul class="nav-links">
+            <li class="active"><a href="{% url 'dashboard:dashboard' %}"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+            <li><a href="{% url 'dashboard:product_list' %}"><i class="fas fa-box-open"></i> <span>Products</span></a></li>
+            <li><a href="{% url 'dashboard:order_list' %}"><i class="fas fa-shopping-cart"></i> <span>Orders</span></a></li>
+            <li><a href="{% url 'dashboard:customer_list' %}"><i class="fas fa-users"></i> <span>Customers</span></a></li>
+            <li><a href="{% url 'dashboard:category_management' %}"><i class="fas fa-tags"></i> <span>Categories</span></a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h2>{{ page_title }}</h2>
+            <div class="user-info">
+                <div class="quick-actions">
+                    <a href="{% url 'dashboard:add_product' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Product
+                    </a>
+                </div>
+                <div>
+                    <h4>{{ user.get_full_name|default:user.username }}</h4>
+                    <p>Store Manager</p>
+                </div>
+            </div>
+        </div>
+
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+                <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Stats Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon bg-primary">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ stats.total_orders }}</h3>
+                    <p>Total Orders</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon bg-secondary">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>${{ stats.total_revenue|floatformat:2 }}</h3>
+                    <p>Total Revenue</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon bg-warning">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ stats.active_customers }}</h3>
+                    <p>Active Customers</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon bg-info">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ stats.total_products }}</h3>
+                    <p>Total Products</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions-grid">
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <h3>Add Product</h3>
+                <p>Create new product listing</p>
+                <a href="{% url 'dashboard:add_product' %}" class="btn btn-primary">Get Started</a>
+            </div>
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <h3>Manage Products</h3>
+                <p>Edit existing products</p>
+                <a href="{% url 'dashboard:product_list' %}" class="btn btn-secondary">Manage</a>
+            </div>
+            <div class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h3>View Orders</h3>
+                <p>Manage customer orders</p>
+                <a href="{% url 'dashboard:order_list' %}" class="btn btn-warning">View Orders</a>
+            </div>
+        </div>
+
+        <!-- Recent Products -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Recently Added Products</h3>
+                <a href="{% url 'dashboard:product_list' %}" style="color: #4CAF50; text-decoration: none;">View All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in recent_products %}
+                        <tr>
+                            <td>
+                                <div class="product-info">
+                                    {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-thumb">
+                                    {% endif %}
+                                    <div>
+                                        <strong>{{ product.name }}</strong>
+                                        <small>{{ product.unit }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ product.category.name }}</td>
+                            <td>${{ product.price }}</td>
+                            <td>
+                                <span class="stock-indicator {% if product.stock < 10 %}low-stock{% elif product.stock < 20 %}medium-stock{% else %}good-stock{% endif %}">
+                                    {{ product.stock }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="status status-{% if product.is_active %}active{% else %}inactive{% endif %}">
+                                    {% if product.is_active %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{% url 'dashboard:edit_product' product.id %}" class="btn-edit" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'dashboard:toggle_product_status' product.id %}" class="btn-toggle" title="{% if product.is_active %}Deactivate{% else %}Activate{% endif %}">
+                                        <i class="fas fa-power-off"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #95a5a6;">
+                                No products yet. <a href="{% url 'dashboard:add_product' %}">Add your first product</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Recent Orders</h3>
+                <a href="{% url 'dashboard:order_list' %}" style="color: #4CAF50; text-decoration: none;">View All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.user.get_full_name|default:order.user.username }}</td>
+                            <td>{{ order.product.name }}</td>
+                            <td>${{ order.product.price|floatformat:2 }}</td>
+                            <td>
+                                <span class="status status-{% if order.is_completed %}completed{% else %}pending{% endif %}">
+                                    {% if order.is_completed %}Completed{% else %}Pending{% endif %}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #95a5a6;">
+                                No recent orders
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

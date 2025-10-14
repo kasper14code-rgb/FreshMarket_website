@@ -26,6 +26,7 @@ urlpatterns = [
     path('cart/', include('cart.urls', namespace='cart')),
     path('reviews/', include('reviews.urls')),
     path('contact/', include('contact.urls')),
+    path('dashboard/', include('dashboard.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

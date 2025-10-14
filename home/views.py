@@ -41,7 +41,7 @@ def login(request):
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
-            return redirect('index')  # change 'index' to wherever you want to send logged-in users
+            return redirect('home:index')  # change 'index' to wherever you want to send logged-in users
     else:
         form = AuthenticationForm()
 
@@ -61,6 +61,6 @@ def signup(request):
 def cart(request):
     return render(request, 'home/cart.html')
 
-def logout_view(request):
+def custom_logout(request):
     logout(request)
-    return redirect('index')
+    return redirect('home:index')

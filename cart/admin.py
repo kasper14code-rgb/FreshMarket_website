@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cart, CartItem, Order
+from .models import Cart, CartItem
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
@@ -18,11 +18,11 @@ class CartItemAdmin(admin.ModelAdmin):
         return obj.get_total_price()
     get_total_price.short_description = 'Total Price'
 
-@admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'product', 'quantity', 'ordered_at', 'is_completed']
-    list_filter = ['is_completed', 'ordered_at']
-    search_fields = ['user__username', 'product__name']
-    list_editable = ['is_completed']
-    readonly_fields = ['ordered_at']
-    date_hierarchy = 'ordered_at'
+# @admin.register(Order)
+# class OrderAdmin(admin.ModelAdmin):
+#     list_display = ['id', 'user', 'product', 'quantity', 'ordered_at', 'is_completed']
+#     list_filter = ['is_completed', 'ordered_at']
+#     search_fields = ['user__username', 'product__name']
+#     list_editable = ['is_completed']
+#     readonly_fields = ['ordered_at']
+#     date_hierarchy = 'ordered_at'
