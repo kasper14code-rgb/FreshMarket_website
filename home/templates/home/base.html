@@ -29,6 +29,9 @@
             <li><a href="{% url 'contact:contact' %}" {% if request.resolver_match.url_name == 'contact' %} class="active"{%endif%}>Contact</a></li>
             {% if user.is_authenticated %}
             <li><a href="{% url 'home:my_orders' %}">My Orders</a></li>
+            {%if user.is_staff%}
+             <li><a href="{% url 'dashboard:dashboard' %}" {% if 'dashboard' in request.path %}class="active"{% endif %}>Dashboard</a></li>
+            {% endif %}
             <li><a href="{% url 'home:logout' %}">Logout</a></li>
             {% else %}
             <li><a href="{% url 'home:signup' %}">Sign Up</a></li>
