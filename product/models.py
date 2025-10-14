@@ -48,7 +48,6 @@ class Product(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    category = models.ForeignKey('Category', on_delete=models.CASCADE)
     class Meta:
         ordering = ['-created_at']
         indexes = [
@@ -65,7 +64,7 @@ class Product(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('products:product_detail', kwargs={'slug': self.slug})
+        return reverse('product:product_detail', kwargs={'slug': self.slug})
 
     def get_average_rating(self):
         from reviews.models import Review

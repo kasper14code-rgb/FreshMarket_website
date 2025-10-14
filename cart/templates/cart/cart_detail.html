@@ -1,0 +1,33 @@
+{% extends "home/base.html" %}
+<!-- cart/templates/cart/cart_detail.html -->
+
+{% block title %}Your Cart{% endblock %}
+
+{% block content %}
+<h1>Your Cart</h1>
+
+{% if cart_items %}
+<table>
+    <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total</th>
+        <th>Action</th>
+    </tr>
+    {% for item in cart_items %}
+    <tr>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>${{ item.product.price }}</td>
+        <td>${{ item.total }}</td>
+        <td>
+            <a href="{% url 'cart:remove_from_cart' item.product.id %}">Remove</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>Your cart is empty.</p>
+{% endif %}
+{% endblock %}
