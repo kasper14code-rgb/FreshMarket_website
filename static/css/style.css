@@ -2270,7 +2270,7 @@ body.dark-mode .filter-controls select {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: #333;
+    color: var(--text-color);
     font-family: var(--font-primary);
 }
 

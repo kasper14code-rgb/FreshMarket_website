@@ -9,15 +9,15 @@ def add_review(request):
         form = ReviewForm(request.POST)
         if form.is_valid():
             review = form.save(commit=False)
-            review.is_approved = False
+            review.is_approved = True
             review.save()
-            messages.success(request, "Thank you! Your review has been submitted and is awaiting approval.")
+            messages.success(request, "Thank you! Your review has been submitted successfully.")
             return redirect('home:index')
     else:
         form = ReviewForm()
     
-    # Get approved reviews to display
-    approved_reviews = Review.objects.filter(is_approved=True).order_by('-created_at')[:10]
+    # Get all approved reviews first (without slicing)
+    approved_reviews = Review.objects.filter(is_approved=True).order_by('-created_at')
     
     # Calculate statistics
     total_reviews = approved_reviews.count()
@@ -32,9 +32,12 @@ def add_review(request):
         average_rating = 0
         positive_percentage = 0
     
+    # Now slice for display (only the first 10 reviews)
+    reviews = approved_reviews[:10]
+    
     context = {
         'form': form,
-        'reviews': approved_reviews,
+        'reviews': reviews,
         'total_reviews': total_reviews,
         'highest_rating': highest_rating,
         'average_rating': round(average_rating, 1),
