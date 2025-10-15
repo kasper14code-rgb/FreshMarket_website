@@ -43,7 +43,7 @@ def product_list(request):
 
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, is_active=True)
-    reviews = Review.objects.filter(product=product, is_approved=True).order_by('-created_at')
+    reviews = []
     
     context = {
         'product': product,

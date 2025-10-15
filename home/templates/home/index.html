@@ -107,25 +107,31 @@
         {% endfor %}
        </div>
       </section> {% endcomment %}
-
-      <section class="reviews-section container">
-        <h2>Customer Reviews</h2>
-        <div class="reviews-grid">
-          {% for review in recent_reviews %}
-          <div class="review-header">
-            <strong>{{ review.user.get_full_name|default:review.user.username }}</strong>
-            <div class="rating">
-              {% for i in "1234" %}
-              <i class="fas fa-star {% if forloop.counter > review.rating %}inactive{% endif %}"></i>
-              {% endfor %}
-            </div>
+<section class="reviews-section container my-5">
+  <h2>Customer Reviews</h2>
+  <div class="row">
+    {% for review in reviews %}
+    <div class="col-md-4 mb-4">
+      <div class="card p-3 h-100 shadow-sm">
+        <div class="review-header">
+          <strong>{{ review.name }}</strong>
+          <div class="rating text-warning">
+            {% for i in "12345" %}
+            <i class="fas fa-star {% if forloop.counter > review.rating %}text-muted{% endif %}"></i>
+            {% endfor %}
           </div>
-          <p>{{ review.comment|truncatewords:30 }}</p>
-          <small><a href="{% url 'freshmart:product_detail' review.product.slug %}">{{ review.product.name }}</a></small>
         </div>
-        {% endfor %}
+        <h5>{{ review.title }}</h5>
+        <p>{{ review.comment|truncatewords:25 }}</p>
       </div>
-      </section>
+    </div>
+    {% empty %}
+    <p>No reviews yet. Be the first to leave a review!</p>
+    {% endfor %}
+  </div>
+  <a href="{% url 'reviews:add_review' %}" class="btn btn-success mt-3">Submit Your Review</a>
+</section>
+
       {% endblock %}
 
       {% comment %} <section
