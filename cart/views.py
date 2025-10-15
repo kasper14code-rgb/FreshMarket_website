@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import CartItem, Product
+from product.models import Product
+from .models import Cart, CartItem
 
 def cart_view(request):
     # Get cart from session (or empty dict)
@@ -26,10 +27,27 @@ def cart_view(request):
 
 
 def add_to_cart(request, product_id):
-    cart = request.session.get('cart', {})
-    cart[product_id] = cart.get(product_id, 0) + 1
-    request.session['cart'] = cart
-    return redirect('cart:cart')
+    product = get_object_or_404(Product, id=product_id)
+
+    # Get quantity from POST (default to 1 if not provided)
+    quantity = int(request.POST.get('quantity', 1))
+
+    # If user is authenticated, use the database cart
+    if request.user.is_authenticated:
+        cart, created = Cart.objects.get_or_create(user=request.user, is_active=True)
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+
+        # Update the quantity if already in cart
+        cart_item.quantity += quantity
+        cart_item.save()
+
+    # For guests (not logged in), store in session
+    else:
+        cart = request.session.get('cart', {})
+        cart[str(product_id)] = cart.get(str(product_id), 0) + quantity
+        request.session['cart'] = cart
+
+    return redirect('cart:cart_detail')
 
 def remove_from_cart(request, product_id):
     cart_item = get_object_or_404(CartItem, product_id=product_id, user=request.user)
@@ -49,14 +67,33 @@ def update_cart(request, product_id):
     return redirect('cart:cart_detail')
 
 def cart_detail(request):
-    cart_items = CartItem.objects.filter(user=request.user)
-    
-    # Calculate line totals for each item
-    for item in cart_items:
-        item.total = item.product.price * item.quantity
+    if request.user.is_authenticated:
+        # Get active cart for the logged-in user
+        cart = Cart.objects.filter(user=request.user, is_active=True).first()
+        if cart:
+            cart_items = CartItem.objects.filter(cart=cart)
+        else:
+            cart_items = CartItem.objects.none()
+    else:
+        # For guests, use session cart
+        session_cart = request.session.get('cart', {})
+        cart_items = []
+        for product_id, quantity in session_cart.items():
+            product = get_object_or_404(Product, id=product_id)
+            item_total = product.price * quantity
+            cart_items.append({
+                'product': product,
+                'quantity': quantity,
+                'item_total': item_total,
+            })
 
-    # Calculate cart total
-    total = sum(item.total for item in cart_items)
+    # Calculate totals
+    if request.user.is_authenticated:
+        for item in cart_items:
+            item.total = item.product.price * item.quantity
+        total = sum(item.total for item in cart_items)
+    else:
+        total = sum(item['item_total'] for item in cart_items)
 
     context = {
         'cart_items': cart_items,

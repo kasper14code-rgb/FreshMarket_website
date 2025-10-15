@@ -33,6 +33,9 @@ class Product(models.Model):
         ('gallon','per gallon'),
         ('liter','per liter'),
         ('dozen','per dozen'),
+        ('loaf','per loaf'),
+        ('block','per block'),
+        ('cup','per cup'),
         ('','each'),
     ]
 

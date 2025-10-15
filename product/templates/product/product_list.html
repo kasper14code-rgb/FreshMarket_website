@@ -6,7 +6,11 @@
 
 {% block content %}
 <main>
-   <div class="shop-controls">
+
+  <section class="products container">
+    <h2 class="section-title">Our Products</h2>
+
+    <div class="shop-controls">
       <div class="filter-control">
         <label for="category-filter">Filter by Category:</label>
         <select id="category-filter" name="category">
@@ -31,16 +35,14 @@
       </div>
     </div>
 
-  <section class="products container">
-    <h2 class="section-title">Our Products</h2>
     <div class="product-grid">
         {% for item in products %}
             <div class="product-card">
-                <a href="{% url 'product:product_detail' item.slug %}">
+                    <a href="{% url 'product:product_detail' item.slug %}">
                     <img src="{{ item.image.url }}" alt="{{ item.name }}">
                     <h3>{{ item.name }}</h3>
                 </a>
-                <p class="price">R{{ item.price }}</p>
+                <p class="price">${{ item.price }}</p>
             </div>
         {% empty %}
             <p>No products available right now.</p>
