@@ -39,8 +39,7 @@
             {% endif %}
           </ul>
           <div class="nav-icons">
-                <a href="{% url 'cart:cart' %}" class="cart-icon">
-                <i class="fas fa-shopping-cart"></i>
+                <a href="{% url 'cart:cart_detail' %}" class="cart-icon">
                 <span class="cart-count">{{ cart.total_items|default:0 }}</span>
                 </a>
 
@@ -77,8 +76,9 @@
              </div>
            </footer>
 
-            {% comment %} <script src="{% static 'js/products.js' %}"></script> {% endcomment %}
-             <script src="{% static 'js/script.js' %}"></script> 
+            
+             
             {% block extra_js %}{% endblock%}
+            <script src="{% static 'js/script.js' %}"></script> 
 </body>
 </html>
