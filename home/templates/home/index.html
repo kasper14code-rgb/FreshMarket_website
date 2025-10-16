@@ -9,7 +9,7 @@
    <div class="container hero-content">
       <h1>Fresh Groceries Delivered Daily</h1>
       <p>Get the best quality, dairy and pantry staples delivered to your doorstep.</p>
-      <a href="{% url 'product:product_list' %}" class="btn btn-primary style="background-color: #4CAF50">Shop Now</a>
+      <a href="{% url 'product:product_list' %}" class="btn btn-primary" style=background-color: #4CAF50>Shop Now</a>
     </div>
 </section>
 
@@ -63,7 +63,7 @@
   <div class="container promo-content">
     <h2>Special Offers!</h2>
     <p>Get up to 20% off on selected organic vegetables this week.</p>
-    <a href="#" class="btn btn-secondary">View Deals</a>
+    <a href="{% url 'deals:deals_list' %}" class="btn btn-secondary">View All Deals</a>
   </div>
 </section>
 

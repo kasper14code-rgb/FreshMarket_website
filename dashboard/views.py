@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Sum, Count, Avg
 from django.utils import timezone
 from datetime import timedelta
@@ -9,12 +9,12 @@ from product.models import Product, Category, Order
 from reviews.models import Review
 from cart.models import Cart, CartItem
 from .forms import ProductForm, CategoryForm
+from deals.models import Deal
 
 def staff_required(user):
     return user.is_staff
 
-@login_required
-@user_passes_test(staff_required, login_url='/')
+@staff_member_required
 def dashboard(request):
     # Calculate real statistics from your models
     total_orders = Order.objects.count()
@@ -41,6 +41,14 @@ def dashboard(request):
     else:
         growth_rate = 100 if recent_orders_count > 0 else 0
 
+    now = timezone.now()
+    active_deals = Deal.objects.filter(
+        is_active=True,
+        start_date__lte=now,
+        end_date__gte=now
+    )
+    total_deals = Deal.objects.count()
+
     # Get recent data
     recent_orders = Order.objects.select_related('user', 'product').order_by('-ordered_at')[:5]
     low_stock_products = Product.objects.filter(stock__lt=10, is_active=True)[:5]
@@ -56,6 +64,8 @@ def dashboard(request):
             'active_customers': active_customers,
             'total_products': total_products,
             'growth_rate': round(growth_rate, 1),
+            'total_deals': total_deals,  # ADD THIS
+            'active_deals_count': active_deals.count(),
         },
         'recent_orders': recent_orders,
         'low_stock_products': low_stock_products,
@@ -63,12 +73,51 @@ def dashboard(request):
         'bestsellers': bestsellers,
         'categories': categories,
         'recent_products': Product.objects.filter(is_active=True).order_by('-created_at')[:5],
+        'recent_products': Product.objects.filter(is_active=True).order_by('-created_at')[:5],
+        'active_deals': active_deals[:5], 
     }
     return render(request, 'dashboard/dashboard.html', context)
+@staff_member_required
+def deal_list(request):
+    deals = Deal.objects.all().order_by('-created_at')
+    
+    # Filtering
+    status_filter = request.GET.get('status', '')
+    if status_filter == 'active':
+        deals = deals.filter(is_active=True)
+    elif status_filter == 'featured':
+        deals = deals.filter(is_featured=True)
+    elif status_filter == 'expired':
+        deals = deals.filter(end_date__lt=timezone.now())
+    
+    return render(request, 'dashboard/deal_list.html', {
+        'deals': deals,
+        'page_title': 'Deals Management',
+        'status_filter': status_filter,
+    })
+
+@staff_member_required
+def toggle_deal_status(request, deal_id):
+    deal = get_object_or_404(Deal, id=deal_id)
+    deal.is_active = not deal.is_active
+    deal.save()
+    
+    action = "activated" if deal.is_active else "deactivated"
+    messages.success(request, f'Deal "{deal.title}" {action} successfully!')
+    return redirect('dashboard:deal_list')
+
+@staff_member_required
+def toggle_deal_featured(request, deal_id):
+    deal = get_object_or_404(Deal, id=deal_id)
+    deal.is_featured = not deal.is_featured
+    deal.save()
+    
+    action = "featured" if deal.is_featured else "unfeatured"
+    messages.success(request, f'Deal "{deal.title}" {action} successfully!')
+    return redirect('dashboard:deal_list')
 
 # Product Management Views
-@login_required
-@user_passes_test(staff_required, login_url='/')
+@staff_member_required
 def product_list(request):
     products = Product.objects.all().order_by('-created_at')
     return render(request, 'dashboard/product_list.html', {
@@ -76,8 +125,7 @@ def product_list(request):
         'page_title': 'Product Management'
     })
 
-@login_required
-@user_passes_test(staff_required, login_url='/')
+@staff_member_required
 def add_product(request):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
@@ -92,9 +140,7 @@ def add_product(request):
         'form': form,
         'page_title': 'Add New Product'
     })
-
-@login_required
-@user_passes_test(staff_required, login_url='/')
+@staff_member_required
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     
@@ -112,9 +158,7 @@ def edit_product(request, product_id):
         'page_title': f'Edit {product.name}',
         'product': product
     })
-
-@login_required
-@user_passes_test(staff_required, login_url='/')
+@staff_member_required
 def toggle_product_status(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     product.is_active = not product.is_active
@@ -125,8 +169,7 @@ def toggle_product_status(request, product_id):
     return redirect('dashboard:product_list')
 
 # Order Management Views
-@login_required
-@user_passes_test(staff_required, login_url='/')
+@staff_member_required
 def order_list(request):
     orders = Order.objects.select_related('user', 'product').order_by('-ordered_at')
     
@@ -144,8 +187,7 @@ def order_list(request):
         'status_filter': status_filter,
     })
 
-@login_required
-@user_passes_test(staff_required, login_url='/')
+@staff_member_required
 def toggle_order_completion(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     order.is_completed = not order.is_completed
@@ -156,8 +198,7 @@ def toggle_order_completion(request, order_id):
     return redirect('dashboard:order_list')
 
 # Customer Management Views
-@login_required
-@user_passes_test(staff_required, login_url='/')
+@staff_member_required
 def customer_list(request):
     customers = User.objects.filter(is_active=True).annotate(
         order_count=Count('orders'),
@@ -169,8 +210,7 @@ def customer_list(request):
         'page_title': 'Customer Management'
     })
 
-@login_required
-@user_passes_test(staff_required, login_url='/')
+@staff_member_required
 def customer_detail(request, user_id):
     customer = get_object_or_404(User, id=user_id)
     orders = Order.objects.filter(user=customer).order_by('-ordered_at')
@@ -184,8 +224,7 @@ def customer_detail(request, user_id):
     })
 
 # Category Management
-@login_required
-@user_passes_test(staff_required, login_url='/')
+@staff_member_required
 def category_management(request):
     categories = Category.objects.all().order_by('name')
     
