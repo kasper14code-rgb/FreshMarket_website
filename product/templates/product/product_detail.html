@@ -5,16 +5,18 @@
 
 {% block content %}
 <section class="product-detail container">
-  <div class="product-detail-card">
-    <div class="product-image">
+  <div class="product-detail-layout">
+    <!-- Image Section - 30% width -->
+    <div class="product-image-section">
       {% if product.image %}
-        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
       {% else %}
-        <img src="https://via.placeholder.com/500x400?text=No+Image" alt="{{ product.name }}">
+        <img src="https://via.placeholder.com/500x400?text=No+Image" alt="{{ product.name }}" class="product-image">
       {% endif %}
     </div>
 
-    <div class="product-info">
+    <!-- Product Info Section - 70% width -->
+    <div class="product-info-section">
       <h1>{{ product.name }}</h1>
       <p class="price">${{ product.price }}</p>
 
@@ -24,11 +26,12 @@
 
       <form method="post" action="{% url 'cart:add_to_cart' product.id %}">
         {% csrf_token %}
-        <label for="quantity">Quantity:</label>
-        <input type="number" name="quantity" id="quantity" value="1" min="1">
+        <div class="quantity-form">
+          <label for="quantity">Quantity:</label>
+          <input type="number" name="quantity" id="quantity" value="1" min="1" class="quantity-input">
+        </div>
         <button type="submit" class="btn btn-primary">Add to Cart</button>
       </form>
-      
 
       {% if average_rating %}
         <div class="rating">
@@ -54,4 +57,133 @@
     {% endif %}
   </div>
 </section>
+
+<style>
+/* Product Detail Layout Styles */
+.product-detail-layout {
+    display: flex;
+    gap: 3rem;
+    align-items: flex-start;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.product-image-section {
+    flex: 0 0 30%;
+    max-width: 30%;
+}
+
+.product-image {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.product-info-section {
+    flex: 1;
+    min-width: 300px;
+}
+
+.product-info-section h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.product-info-section .price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #27ae60;
+    margin-bottom: 1.5rem;
+}
+
+.product-info-section .description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    color: #555;
+}
+
+.quantity-form {
+    margin-bottom: 1.5rem;
+}
+
+.quantity-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.quantity-input {
+    width: 80px;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background-color: #27ae60;
+    color: white;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #219a52;
+}
+
+.rating {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #ffc107;
+}
+
+/* Reviews Section */
+.reviews-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.review {
+    background: #f8f9fa;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+    border-left: 4px solid #3498db;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .product-detail-layout {
+        flex-direction: column;
+    }
+    
+    .product-image-section {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .product-info-section {
+        min-width: 100%;
+    }
+    
+    .product-info-section h1 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Ensure this doesn't affect other pages */
+body:not(.home-page) .product-detail-layout {
+    display: flex;
+}
+</style>
 {% endblock %}

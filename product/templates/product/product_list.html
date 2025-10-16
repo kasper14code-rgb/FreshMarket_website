@@ -7,34 +7,33 @@
 {% block content %}
 <main>
 
-  <section class="products container">
-    <h2 class="section-title">Our Products</h2>
-
-    <div class="shop-controls">
-      <div class="filter-control">
-        <label for="category-filter">Filter by Category:</label>
-        <select id="category-filter" name="category">
-          <option value="all">All Categories</option>
-          <option value="fruits">Fruits</option>
-          <option value="vegetables">Vegetables</option>
-          <option value="dairy">Dairy</option>
-          <option value="snacks">Snacks</option>
-          <option value="bakery">Bakery</option>
-        </select>
-      </div>
-
-      <div class="sort-control">
-        <label for="sort-options">Sort by:</label>
-        <select id="sort-options" name="sort">
-          <option value="default">Default</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-          <option value="name-asc">Name: A-Z</option>
-          <option value="name-desc">Name: Z-A</option>
-        </select>
-      </div>
+  <form method="get" class="shop-controls">
+    <div class="filter-control">
+      <label for="category-filter">Filter by Category:</label>
+      <select id="category-filter" name="category" onchange="this.form.submit()">
+        <option value="all" {% if current_category == "all" or not current_category %}selected{% endif %}>
+          All Categories
+        </option>
+        {% for category in categories %}
+          <option value="{{ category.slug }}" {% if current_category == category.slug %}selected{% endif %}>
+            {{ category.name }}
+          </option>
+        {% endfor %}
+      </select>
     </div>
-
+  
+    <div class="sort-control">
+      <label for="sort-options">Sort by:</label>
+      <select id="sort-options" name="sort" onchange="this.form.submit()">
+        <option value="default" {% if sort_by == "default" %}selected{% endif %}>Default</option>
+        <option value="price-asc" {% if sort_by == "price-asc" %}selected{% endif %}>Price: Low to High</option>
+        <option value="price-desc" {% if sort_by == "price-desc" %}selected{% endif %}>Price: High to Low</option>
+        <option value="name-asc" {% if sort_by == "name-asc" %}selected{% endif %}>Name: A-Z</option>
+        <option value="name-desc" {% if sort_by == "name-desc" %}selected{% endif %}>Name: Z-A</option>
+      </select>
+    </div>
+  </form>
+  
     <div class="product-grid">
         {% for item in products %}
             <div class="product-card">
