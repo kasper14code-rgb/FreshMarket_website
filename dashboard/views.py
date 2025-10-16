@@ -9,6 +9,7 @@ from product.models import Product, Category, Order
 from reviews.models import Review
 from cart.models import Cart, CartItem
 from .forms import ProductForm, CategoryForm
+from deals.models import Deal
 
 def staff_required(user):
     return user.is_staff
@@ -40,6 +41,14 @@ def dashboard(request):
         growth_rate = ((recent_orders_count - previous_orders_count) / previous_orders_count) * 100
     else:
         growth_rate = 100 if recent_orders_count > 0 else 0
+
+    now = timezone.now()
+    active_deals = Deal.objects.filter(
+        is_active=True,
+        start_date__lte=now,
+        end_date__gte=now
+    )
+    total_deals = Deal.objects.count()
 
     # Get recent data
     recent_orders = Order.objects.select_related('user', 'product').order_by('-ordered_at')[:5]
@@ -203,3 +212,45 @@ def category_management(request):
         'form': form,
         'page_title': 'Category Management'
     })
+
+def deal_list(request):
+    deals = Deal.objects.all().order_by('-created_at')
+    
+    # Filtering
+    status_filter = request.GET.get('status', '')
+    if status_filter == 'active':
+        deals = deals.filter(is_active=True)
+    elif status_filter == 'featured':
+        deals = deals.filter(is_featured=True)
+    elif status_filter == 'expired':
+        deals = deals.filter(end_date__lt=timezone.now())
+    
+    return render(request, 'dashboard/deal_list.html', {
+        'deals': deals,
+        'page_title': 'Deals Management',
+        'status_filter': status_filter,
+    })
+
+
+# deals manangement views
+@login_required
+@user_passes_test(staff_required, login_url='/')
+def toggle_deal_status(request, deal_id):
+    deal = get_object_or_404(Deal, id=deal_id)
+    deal.is_active = not deal.is_active
+    deal.save()
+    
+    action = "activated" if deal.is_active else "deactivated"
+    messages.success(request, f'Deal "{deal.title}" {action} successfully!')
+    return redirect('dashboard:deal_list')
+
+@login_required
+@user_passes_test(staff_required, login_url='/')
+def toggle_deal_featured(request, deal_id):
+    deal = get_object_or_404(Deal, id=deal_id)
+    deal.is_featured = not deal.is_featured
+    deal.save()
+    
+    action = "featured" if deal.is_featured else "unfeatured"
+    messages.success(request, f'Deal "{deal.title}" {action} successfully!')
+    return redirect('dashboard:deal_list')

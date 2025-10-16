@@ -1,0 +1,147 @@
+{% extends 'dashboard/dashboard.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Sidebar (inherited from dashboard.html) -->
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h2>{{ page_title }}</h2>
+            <div class="user-info">
+                <div class="quick-actions">
+                    <a href="{% url 'admin:deals_deal_add' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add New Deal
+                    </a>
+                </div>
+                <div>
+                    <h4>{{ user.get_full_name|default:user.username }}</h4>
+                    <p>Store Manager</p>
+                </div>
+            </div>
+        </div>
+
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+                <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Filters -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Filter Deals</h3>
+            </div>
+            <div class="filter-buttons">
+                <a href="{% url 'dashboard:deal_list' %}" 
+                   class="btn {% if not status_filter %}btn-primary{% else %}btn-outline{% endif %}">
+                    All Deals ({{ deals.count }})
+                </a>
+                <a href="{% url 'dashboard:deal_list' %}?status=active" 
+                   class="btn {% if status_filter == 'active' %}btn-primary{% else %}btn-outline{% endif %}">
+                    Active
+                </a>
+                <a href="{% url 'dashboard:deal_list' %}?status=featured" 
+                   class="btn {% if status_filter == 'featured' %}btn-primary{% else %}btn-outline{% endif %}">
+                    Featured
+                </a>
+                <a href="{% url 'dashboard:deal_list' %}?status=expired" 
+                   class="btn {% if status_filter == 'expired' %}btn-primary{% else %}btn-outline{% endif %}">
+                    Expired
+                </a>
+            </div>
+        </div>
+
+        <!-- Deals Table -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>All Deals</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>Discount</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Products</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for deal in deals %}
+                        <tr>
+                            <td>
+                                <div class="product-info">
+                                    <div>
+                                        <strong>{{ deal.title }}</strong>
+                                        {% if deal.is_featured %}
+                                        <span style="background: #ffd700; color: #000; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; margin-left: 5px;">Featured</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ deal.get_deal_type_display }}</td>
+                            <td>
+                                <span style="background: #4CAF50; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">
+                                    {{ deal.get_discount_display }}
+                                </span>
+                            </td>
+                            <td>{{ deal.start_date|date:"M d, Y" }}</td>
+                            <td>
+                                {{ deal.end_date|date:"M d, Y" }}
+                                {% if deal.end_date < timezone.now %}
+                                <span style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; margin-left: 5px;">Expired</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span style="background: #3498db; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">
+                                    {{ deal.products.count }} products
+                                </span>
+                            </td>
+                            <td>
+                                <span class="status status-{% if deal.is_active %}active{% else %}inactive{% endif %}">
+                                    {% if deal.is_active %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{% url 'admin:deals_deal_change' deal.id %}" class="btn-edit" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'dashboard:toggle_deal_status' deal.id %}" class="btn-toggle" title="{% if deal.is_active %}Deactivate{% else %}Activate{% endif %}">
+                                        <i class="fas fa-power-off"></i>
+                                    </a>
+                                    <a href="{% url 'dashboard:toggle_deal_featured' deal.id %}" class="btn-edit" style="color: #ffd700;" title="{% if deal.is_featured %}Unfeature{% else %}Feature{% endif %}">
+                                        <i class="fas fa-star"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" style="text-align: center; color: #95a5a6; padding: 2rem;">
+                                <i class="fas fa-tags" style="font-size: 3rem; color: #bdc3c7; margin-bottom: 1rem; display: block;"></i>
+                                No deals found. 
+                                <br>
+                                <a href="{% url 'admin:deals_deal_add' %}" style="color: #4CAF50;">Create your first deal</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

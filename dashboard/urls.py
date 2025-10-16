@@ -16,5 +16,10 @@ urlpatterns = [
     path('customers/', views.customer_list, name='customer_list'),
     path('customers/<int:user_id>/', views.customer_detail, name='customer_detail'),
     path('categories/', views.category_management, name='category_management'),
+
+    # ADD THESE DEALS URLS
+    path('deals/', views.deal_list, name='deal_list'),
+    path('deals/<int:deal_id>/toggle/', views.toggle_deal_status, name='toggle_deal_status'),
+    path('deals/<int:deal_id>/feature/', views.toggle_deal_featured, name='toggle_deal_featured'),
 ]
 
