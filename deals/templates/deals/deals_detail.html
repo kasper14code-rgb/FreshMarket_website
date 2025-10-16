@@ -1,0 +1,26 @@
+{% extends 'home/base.html' %}
+{% block title %}{{ deal.title }} - FreshMart{% endblock %}
+
+{% block content %}
+<section class="container my-5">
+  <h1>{{ deal.title }}</h1>
+  <p>{{ deal.description }}</p>
+
+  <h2>Products in this deal</h2>
+  {% if products %}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {% for product in products %}
+        <div class="card p-4 shadow-md rounded-lg">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% endif %}
+          <h3>{{ product.name }}</h3>
+          <p>${{ product.price }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No active products in this deal.</p>
+  {% endif %}
+</section>
+{%endblock%}
