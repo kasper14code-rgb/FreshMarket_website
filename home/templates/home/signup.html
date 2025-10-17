@@ -4,54 +4,300 @@
 {% block title %}Sign Up - FreshMart{% endblock %}
 
 {% block content %}
-<section class="auth-section container">
-  <div class="auth-card">
-    <h1 class="auth-title">Create Your Account</h1>
+<section class="auth-section">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1 class="auth-title">Create Your Account</h1>
+                <p class="auth-subtitle">Join FreshMart and start shopping fresh today!</p>
+            </div>
 
-    <form method="post" action="." class="auth-form">
-      {% csrf_token %}
+            <form method="post" action="." class="auth-form">
+                {% csrf_token %}
 
-      <!-- Username -->
-      <div class="form-group">
-        <label for="{{ form.username.id_for_label }}">Username</label>
-        {{ form.username }}
-      </div>
+                <!-- Username -->
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                    {{ form.username }}
+                    {% if form.username.help_text %}
+                    <small class="form-help">{{ form.username.help_text }}</small>
+                    {% endif %}
+                </div>
 
-      <!-- Email -->
-      <div class="form-group">
-        <label for="{{ form.email.id_for_label }}">Email</label>
-        {{ form.email }}
-      </div>
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                    {{ form.email }}
+                    {% if form.email.help_text %}
+                    <small class="form-help">{{ form.email.help_text }}</small>
+                    {% endif %}
+                </div>
 
-      <!-- Password -->
-      <div class="form-group">
-        <label for="{{ form.password1.id_for_label }}">Password</label>
-        {{ form.password1 }}
-      </div>
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                    {{ form.password1 }}
+                    {% if form.password1.help_text %}
+                    <small class="form-help">{{ form.password1.help_text }}</small>
+                    {% endif %}
+                </div>
 
-      <!-- Repeat Password -->
-      <div class="form-group">
-        <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
-        {{ form.password2 }}
-      </div>
+                <!-- Repeat Password -->
+                <div class="form-group">
+                    <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                    {{ form.password2 }}
+                    {% if form.password2.help_text %}
+                    <small class="form-help">{{ form.password2.help_text }}</small>
+                    {% endif %}
+                </div>
 
-      <!-- Error Messages -->
-      {% if form.errors or form.non_field_errors %}
-      <div class="form-errors">
-        {% for field in form %}
-          {{ field.errors }}
-        {% endfor %}
-        {{ form.non_field_errors }}
-      </div>
-      {% endif %}
+                <!-- Error Messages -->
+                {% if form.errors or form.non_field_errors %}
+                <div class="form-errors">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                        <div class="error-item">
+                            <span class="error-icon">⚠</span>
+                            {{ error }}
+                        </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                    <div class="error-item">
+                        <span class="error-icon">⚠</span>
+                        {{ error }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
-      <button type="submit" class="btn-primary w-100">Sign Up</button>
-    </form>
+                <button type="submit" class="auth-btn btn-primary">Create Account</button>
+            </form>
 
-    <p class="auth-switch">
-      Already have an account?
-      <a href="{% url 'home:login' %}">Log in here</a>
-    </p>
-  </div>
+            <div class="auth-footer">
+                <p class="auth-switch">
+                    Already have an account?
+                    <a href="{% url 'home:login' %}" class="auth-link">Log in here</a>
+                </p>
+            </div>
+        </div>
+    </div>
 </section>
+
+<style>
+    .auth-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        padding: 2rem 1rem;
+        background-color: var(--bg-color);
+        font-family: var(--font-primary);
+        transition: all 0.3s ease;
+    }
+
+    .auth-container {
+        width: 100%;
+        max-width: 450px;
+    }
+
+    .auth-card {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        padding: 2.5rem;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .auth-title {
+        color: var(--primary-green);
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        font-family: var(--font-primary);
+    }
+
+    .auth-subtitle {
+        color: var(--text-color);
+        opacity: 0.8;
+        font-size: 1rem;
+        font-family: var(--font-secondary);
+    }
+
+    .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-label {
+        color: var(--text-color);
+        font-weight: 600;
+        font-size: 0.95rem;
+        font-family: var(--font-primary);
+    }
+
+    .auth-form input {
+        padding: 0.75rem 1rem;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        font-size: 1rem;
+        font-family: var(--font-secondary);
+        transition: all 0.3s ease;
+    }
+
+    .auth-form input:focus {
+        outline: none;
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    }
+
+    .auth-form input::placeholder {
+        color: var(--text-color);
+        opacity: 0.5;
+    }
+
+    .form-help {
+        color: var(--text-color);
+        opacity: 0.7;
+        font-size: 0.85rem;
+        font-family: var(--font-secondary);
+        margin-top: 0.25rem;
+    }
+
+    .form-errors {
+        background-color: rgba(220, 53, 69, 0.1);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .error-item {
+        color: #dc3545;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-family: var(--font-secondary);
+    }
+
+    .error-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .error-icon {
+        font-size: 0.8rem;
+        margin-top: 0.1rem;
+    }
+
+    .auth-btn {
+        background-color: var(--primary-green);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: var(--font-primary);
+        text-align: center;
+        margin-top: 0.5rem;
+    }
+
+    .auth-btn:hover {
+        background-color: var(--secondary-green);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .auth-switch {
+        color: var(--text-color);
+        font-family: var(--font-secondary);
+        margin: 0;
+    }
+
+    .auth-link {
+        color: var(--primary-green);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+    .auth-link:hover {
+        color: var(--secondary-green);
+        text-decoration: underline;
+    }
+
+    /* Dark mode specific adjustments */
+    body.dark-mode .auth-form input {
+        background-color: var(--card-bg);
+        border-color: var(--border-color-dark);
+    }
+
+    body.dark-mode .auth-form input:focus {
+        border-color: var(--primary-green);
+        background-color: var(--card-bg);
+    }
+
+    body.dark-mode .form-errors {
+        background-color: rgba(220, 53, 69, 0.15);
+        border-color: rgba(220, 53, 69, 0.4);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .auth-card {
+            padding: 2rem 1.5rem;
+        }
+
+        .auth-title {
+            font-size: 1.75rem;
+        }
+
+        .auth-section {
+            padding: 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .auth-card {
+            padding: 1.5rem 1rem;
+        }
+
+        .auth-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* Ensure all elements inherit theme colors */
+    .auth-card,
+    .auth-card * {
+        color: inherit;
+        transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+    }
+</style>
 {% endblock %}
