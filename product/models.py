@@ -36,6 +36,7 @@ class Product(models.Model):
         ('loaf','per loaf'),
         ('block','per block'),
         ('cup','per cup'),
+        ('slice','per slice'),
         ('','each'),
     ]
 
