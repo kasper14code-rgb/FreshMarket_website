@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from product.models import Product
 
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
@@ -27,6 +27,7 @@ class CartItem(models.Model):
 
     def get_total_price(self):
         return self.product.price * self.quantity
+
 
     class Meta:
         unique_together = ['cart', 'product']

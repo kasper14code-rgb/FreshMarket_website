@@ -1,5 +1,4 @@
 {% extends "home/base.html" %}
-<!-- cart/templates/cart/cart_detail.html -->
 
 {% block title %}Your Cart{% endblock %}
 
@@ -51,7 +50,7 @@
             <div class="cart-buttons-right">
                 <h3 class="total-price">Total: ${{ total }}</h3>
                 <button class="checkout-btn">
-                    <a href="#" class="btn btn-success">Proceed to Checkout</a>
+                    <a href="{% url 'home:index' %}" class="btn btn-success">Proceed to Checkout</a>
                 </button>
             </div>
         </div>
@@ -59,7 +58,6 @@
 </section>
 
 <style>
-    /* Your existing cart styles remain exactly the same */
     .cart-style {
         display: flex;
         justify-content: center;

@@ -38,7 +38,10 @@ def add_to_cart(request, product_id):
         cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
 
         # Update the quantity if already in cart
-        cart_item.quantity += quantity
+        if created:
+            cart_item.quantity = quantity  # Set initial quantity
+        else:
+            cart_item.quantity += quantity  # Add to existing quantity
         cart_item.save()
         messages.success(request, f"Added {quantity} {product.name} to cart.")
 
@@ -109,9 +112,13 @@ def cart_detail(request):
         if cart:
             cart_items = CartItem.objects.filter(cart=cart)
             # Calculate total for authenticated users
+            # Add 'total' attribute to each cart item for template consistency
+            for item in cart_items:
+                item.total = item.get_total_price()
+            # Calculate total for authenticated users
             total = cart.get_total_price()
         else:
-            cart_items = CartItem.objects.none()
+            cart_items = []
             total = 0
     else:
         # For guests, use session cart
