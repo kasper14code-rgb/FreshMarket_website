@@ -1,21 +1,82 @@
 {% extends 'home/base.html' %}
+{% load deal_filters %}
 {% block title %}{{ deal.title }} - FreshMart{% endblock %}
 
 {% block content %}
-<section class="container my-5">
-  <h1>{{ deal.title }}</h1>
-  <p>{{ deal.description }}</p>
+{% comment %} <section class="container my-10">
 
-  <h2>Products in this deal</h2>
+  <!-- Deal Header (Image + Info) -->
+  <div class="deal-header" style="max-width: 50%; margin: 0 auto; text-align: center;">
+    {% if deal.banner_image %}
+      <img src="{{ deal.banner_image.url }}" 
+           alt="{{ deal.title }}" 
+           style="width: 100%; height: 300px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 1.5rem; object-fit: cover;">
+    {% endif %}
+
+    <h1 style="font-size: 2rem; font-weight: 700; color: var(--primary-green); margin-bottom: 0.75rem;">
+      {{ deal.title }}
+    </h1>
+
+    <p style="font-size: 1.1rem; color: #4a4a4a; margin-bottom: 1rem;">
+      {{ deal.description }}
+    </p>
+
+    <p style="font-size: 1.25rem; font-weight: 600;color: var(--primary-green); margin-bottom: 1rem;">
+      {{ deal.get_discount_display }}
+    </p>
+
+    <div style="font-size: 0.9rem; color: #666;">
+      <p><strong>Valid from:</strong> {{ deal.start_date|date:"M d, Y" }}</p>
+      <p><strong>Valid until:</strong> {{ deal.end_date|date:"M d, Y" }}</p>
+    </div>
+    
+  </div>
+
+  <hr style="margin: 2rem 0; border-color: var(--border-color);"> {% endcomment %}
+
+  <!-- Products in this deal -->
+  <h2 style="font-size: 1.5rem; font-weight: 600; margin: 1.5rem; text-align:center;">
+    This deal
+  </h2>
+
   {% if products %}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div style="display: flex;justify-content:center">
       {% for product in products %}
-        <div class="card p-4 shadow-md rounded-lg">
+        <div class="card" style="padding: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-radius: 8px; background: var(--card-bg); transition: transform 0.2s;width:40%;">
           {% if product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 300px; object-fit: 100px 0; border-radius: 6px; margin-bottom: 0.75rem;">
           {% endif %}
-          <h3>{{ product.name }}</h3>
-          <p>${{ product.price }}</p>
+          <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">{{ product.name }}</h3>
+
+          {% if deal.is_valid %}
+            {% with discounted_price=deal|get_discounted_price:product.price %}
+              {% if discounted_price < product.price %}
+                <p style="color: #a0aec0; text-decoration: line-through;">${{ product.price }}</p>
+                <p style="color: var(--primary-green); font-weight: bold;">
+                  ${{ discounted_price|floatformat:2 }}
+                  <span style="font-size: 0.875rem; var(--primary-green); font-weight: 600; margin-left: 0.25rem;">
+                    {{ deal.get_discount_display }}
+                  </span>
+                </p>
+                <div style="margin-bottom: 1rem;">
+                  <p style="font-size: 0.875rem; color: #718096; margin-bottom: 0.5rem;">
+                    <strong>Valid from:</strong> {{ deal.start_date|date:"M d, Y" }}
+                  </p>
+                  <p style="font-size: 0.875rem; color: #718096;">
+                    <strong>Valid until:</strong> {{ deal.end_date|date:"M d, Y" }}
+                  </p>
+                </div>
+              {% else %}
+                <p style="color: var(--primary-green); font-weight: 600;">${{ product.price }}</p>
+              {% endif %}
+            {% endwith %}
+          {% else %}
+            <p style="color: var(--primary-green); font-weight: 600;">${{ product.price }}</p>
+          {% endif %}
+          
+          <a href="{% url 'product:product_detail' product.slug %}" style="margin-top: 0.75rem; display: inline-block; color: var(--primary-green); text-decoration: none;">
+            View Product →
+          </a>
         </div>
       {% endfor %}
     </div>
@@ -23,4 +84,12 @@
     <p>No active products in this deal.</p>
   {% endif %}
 </section>
-{%endblock%}
+
+<style>
+@media (max-width: 768px) {
+  .deal-header {
+    max-width: 90% !important;
+  }
+}
+</style>
+{% endblock %}
