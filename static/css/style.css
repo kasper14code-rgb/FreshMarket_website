@@ -1045,14 +1045,14 @@ Add 'open' class via JS to show modal */
     opacity: 0.7;
 }
 
-/* PRODUCT DETAILS MODEL STYLES */
+/* PRODUCT DETAILS MODEL STYLES
 product-detail-content {
     /* Specific overrides if needed */
-    max-width: 800px; /* Allow wider modal for details */
-    max-height: 90vh;
+    /* max-width: 800px; /* Allow wider modal for details */
+    /* max-height: 90vh; */ 
     /* Layout for image and text */
     /* display: flex; */ /* We'll let the container inside handle layout */
-}
+/* } */ 
 
 #product-detail-container {
     display: grid; /* Use grid for layout */
@@ -1078,10 +1078,6 @@ product-detail-content {
     border: 1px solid var(--border-color);
     justify-self: center; /* Center image in its grid cell */
 }
-
-/* .product-detail-info {
-     Container for text content 
-}  */
 
 .product-detail-name {
     font-size: 2rem;
@@ -2588,6 +2584,24 @@ body.dark-mode .errorlist {
     border-radius: 6px;
     border-left: 4px solid #3498db;
 }
+
+/* deal detail styles */
+.deal-detail img {
+    max-height: 400px;
+    object-fit: cover;
+    width: 100%;
+  }
+  
+  .deal-info h1 {
+    color: var(--primary-green);
+  }
+  
+  @media (max-width: 768px) {
+    .deal-detail {
+      grid-template-columns: 1fr;
+    }
+  }
+
 
 /* Responsive Design */
 @media (max-width: 768px) {

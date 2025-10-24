@@ -43,7 +43,7 @@
 
   <hr>
 
-  <div class="reviews-section">
+  {% comment %} <div class="reviews-section">
     <h2>Customer Reviews</h2>
     {% if reviews %}
       {% for review in reviews %}
@@ -55,7 +55,7 @@
     {% else %}
       <p>No reviews yet.</p>
     {% endif %}
-  </div>
+  </div> {% endcomment %}
 </section>
 
 {% endblock %}

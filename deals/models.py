@@ -2,6 +2,7 @@ from django.db import models
 from product.models import Product
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
+from decimal import Decimal
 
 
 class Deal(models.Model):
@@ -61,3 +62,42 @@ class Deal(models.Model):
             return "BOGO"
         else:
             return "Special Deal"
+
+    def get_discounted_price(self, original_price):
+        """
+        Calculate discounted price for a given product price.
+        
+        Args:
+            original_price: The original price of the product
+            
+        Returns:
+            The discounted price based on deal type
+        """
+        # Convert to Decimal if not already
+        original_price = Decimal(str(original_price))
+        
+        if self.deal_type == 'percentage' and self.discount_percentage > 0:
+            # Convert percentage calculation to Decimal
+            percentage = Decimal(str(self.discount_percentage))
+            discount_factor = (Decimal('100') - percentage) / Decimal('100')
+            discounted = original_price * discount_factor
+            return round(discounted, 2)
+        elif self.deal_type == 'fixed' and self.discount_amount > 0:
+            discounted = original_price - self.discount_amount
+            return round(max(discounted, Decimal('0')), 2)
+        else:
+            return round(original_price, 2)
+
+    @property
+    def discounted_price(self):
+        """
+        Returns discounted price based on discount type.
+        Assumes self.original_price is set.
+        """
+        if self.deal_type == 'percentage' and self.discount_percentage > 0:
+            return round(self.original_price * (1 - self.discount_percentage / 100), 2)
+        elif self.deal_type == 'fixed' and self.discount_amount > 0:
+            discounted = self.original_price - self.discount_amount
+            return round(discounted if discounted > 0 else 0, 2)
+        else:
+            return self.original_price
