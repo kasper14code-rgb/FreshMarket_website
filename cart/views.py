@@ -130,7 +130,7 @@ def cart_detail(request):
             cart_items.append({
                 'product': product,
                 'quantity': quantity,
-                'total': item_total,  # Changed from 'item_total' to 'total' for template consistency
+                'total': item_total,  
             })
         total = sum(item['total'] for item in cart_items)
 
