@@ -17,40 +17,40 @@
     <header class="header">
         <nav class="navbar container">
           <a href="{% url 'home:index' %}" class="logo">FreshMart</a>
-          <div class="search-bar">
-            <form method="get" action="{% url 'product:product_list' %}">
-              <input type="text" name="search" placeholder="Search for products..." value="{{ request.GET.search }}">
-              <button type="submit"><i class="fas fa-search"></i></button>
-            </form>
-          </div>
+            <div class="search-bar">
+              <form method="get" action="{% url 'product:product_list' %}">
+                <input type="text" name="search" placeholder="Search for products..." value="{{ request.GET.search }}">
+                  <button type="submit"><i class="fas fa-search"></i></button>
+              </form>
+            </div>
           <ul class="nav-links">
-            <li><a href="{% url 'home:index' %}" {% if request.resolver_match.url_name == 'home' %} class="active"{%endif%}>Home</a></li>
-            <li><a href="{% url 'product:product_list' %}" {% if request.resolver_match.url_name == 'product_list' %} class="active"{%endif%}>Shop</a></li>
-            <li><a href="{% url 'contact:contact' %}" {% if request.resolver_match.url_name == 'contact' %} class="active"{%endif%}>Contact</a></li>
+              <li><a href="{% url 'home:index' %}" {% if request.resolver_match.url_name == 'home' %} class="active"{%endif%}>Home</a></li>
+              <li><a href="{% url 'product:product_list' %}" {% if request.resolver_match.url_name == 'product_list' %} class="active"{%endif%}>Shop</a></li>
+              <li><a href="{% url 'contact:contact' %}" {% if request.resolver_match.url_name == 'contact' %} class="active"{%endif%}>Contact</a></li>
             {% if user.is_authenticated %}
-            <li><a href="{% url 'home:my_orders' %}">My Orders</a></li>
+              <li><a href="{% url 'home:my_orders' %}">My Orders</a></li>
             {%if user.is_staff%}
-             <li><a href="{% url 'dashboard:dashboard' %}" {% if 'dashboard' in request.path %}class="active"{% endif %}>Dashboard</a></li>
+              <li><a href="{% url 'dashboard:dashboard' %}" {% if 'dashboard' in request.path %}class="active"{% endif %}>Dashboard</a></li>
             {% endif %}
-            <li><a href="{% url 'home:logout' %}">Logout</a></li>
+              <li><a href="{% url 'home:logout' %}">Logout</a></li>
             {% else %}
-            <li><a href="{% url 'home:signup' %}">Sign Up</a></li>
-            <li><a href="{% url 'home:login' %}">Login</a></li>
+              <li><a href="{% url 'home:signup' %}">Sign Up</a></li>
+              <li><a href="{% url 'home:login' %}">Login</a></li>
             {% endif %}
           </ul>
-          <div class="nav-icons">
-                <a href="{% url 'cart:cart_detail' %}" class="cart-icon">
-                  <i class="fas fa-shopping-cart"></i>
-                <span class="cart-count">{{ cart_total }}</span>
-                </a>
+            <div class="nav-icons">
+                  <a href="{% url 'cart:cart_detail' %}" class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                  <span class="cart-count">{{ cart_count|default:0 }}</span>
+                  </a>
 
-            <button class="theme-toggle-btn" aria-label="Toggle Theme">
-                <i class="fas fa-sun"></i> <i class="fas fa-moon"></i>
-            </button>
-            <button class="menu-toggle" aria-label="Toggle Menu">
-                <i class="fas fa-bars"></i>
-            </button>
-          </div>
+              <button class="theme-toggle-btn" aria-label="Toggle Theme">
+                  <i class="fas fa-sun"></i> <i class="fas fa-moon"></i>
+              </button>
+              <button class="menu-toggle" aria-label="Toggle Menu">
+                  <i class="fas fa-bars"></i>
+              </button>
+            </div>
        </nav>
     </header>
   </div>
@@ -58,10 +58,10 @@
 {% if messages %}
     <div class="messages-container">
       {% for message in messages %}
-      <div class="alert alert-{{ messages.tags }}">
-        {{ message }}
-        <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
-      </div>
+        <div class="alert alert-{{ messages.tags }}">
+          {{ message }}
+          <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+        </div>
       {% endfor %}
     </div>
   {% endif %}
@@ -71,15 +71,14 @@
   </main>
           
 
-           <footer class="footer">
-             <div class="container">
-                <p>&copy; <span id="current-year"></span> FreshMart. All rights reserved.</p>
-             </div>
-           </footer>
+  <footer class="footer">
+      <div class="container">
+          <p>&copy; <span id="current-year"></span> FreshMart. All rights reserved.</p>
+      </div>
+  </footer>
 
-            
-             
-            {% block extra_js %}{% endblock%}
-            <script src="{% static 'js/script.js' %}"></script> 
+  {% block extra_js %}{% endblock%}
+  <script src="{% static 'js/script.js' %}"></script> 
+
 </body>
 </html>

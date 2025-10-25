@@ -1,6 +1,17 @@
 {% extends 'home/base.html' %}
 {% block title %}My Orders{% endblock %}
 {% block content %}
-<h1>My Orders</h1>
-<p>List of your past orders will appear here.</p>
+<section class="order-list">
+    <h1>My Orders</h1>
+    <p>List of your past orders will appear here.</p>
+</section>
 {% endblock %}
+
+<style>
+@media (max-width: 768px) {
+  .orderilist {
+    max-width: 90% !important;
+    center
+  }
+}
+</style>
