@@ -8,11 +8,12 @@ from product.models import Product, Category
 from reviews.models import Review
 from django.contrib import messages
 from django.db.models import Avg
+from cart.models import Order
 
 @login_required
 def my_orders(request):
     # Fetch orders for the logged-in user
-    orders = request.user.orders.all()  # Adjust depending on your Order model
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')  # Adjust depending on your Order model
     return render(request, 'home/my_orders.html', {'orders': orders})
 
 

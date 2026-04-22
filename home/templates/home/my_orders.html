@@ -1,17 +1,160 @@
 {% extends 'home/base.html' %}
-{% block title %}My Orders{% endblock %}
+{% block title %}My Orders - FreshMart{% endblock %}
+
 {% block content %}
-<section class="order-list">
-    <h1>My Orders</h1>
-    <p>List of your past orders will appear here.</p>
+<section class="orders-style">
+  <div class="orders-container">
+    <h1 class="orders-title">My Orders</h1>
+
+    {% if orders %}
+    <div class="table-container">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Date</th>
+            <th>Delivery Address</th>
+            <th>Total</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.created_at|date:"d M Y" }}</td>
+            <td>{{ order.address }}, {{ order.city }}, {{ order.postal_code }}</td>
+            <td>${{ order.total_price }}</td>
+            <td><span class="status-badge">{{ order.status }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-orders">
+      <p>You have no past orders yet.</p>
+      <a href="{% url 'product:product_list' %}" class="shop-btn">Start Shopping</a>
+    </div>
+    {% endif %}
+  </div>
 </section>
-{% endblock %}
 
 <style>
-@media (max-width: 768px) {
-  .orderilist {
-    max-width: 90% !important;
-    center
+  .orders-style {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+    min-height: 80vh;
+    background-color: var(--bg-color);
+    font-family: var(--font-primary);
+    color: var(--text-color);
   }
+
+  .orders-container {
+    width: 100%;
+    max-width: 900px;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+    height: fit-content;
+  }
+
+  .orders-title {
+    color: var(--primary-green);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .orders-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+    color: var(--text-color);
+  }
+
+  .orders-table thead {
+    background-color: var(--primary-green);
 }
+
+.orders-table th {
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+  .orders-table tbody tr {
+    background-color: var(--card-bg);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+  }
+
+  .orders-table tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .orders-table td {
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-color);
+  }
+
+  .status-badge {
+    background-color: rgba(76, 175, 80, 0.15);
+    color: var(--primary-green);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: capitalize;
+  }
+
+  .empty-orders {
+    text-align: center;
+    padding: 3rem 0;
+    color: var(--text-color);
+    opacity: 0.7;
+  }
+
+  .shop-btn {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-green);
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .shop-btn:hover {
+    background-color: var(--secondary-green);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .orders-container {
+      padding: 1.5rem;
+    }
+
+    .orders-table th,
+    .orders-table td {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.85rem;
+    }
+  }
 </style>
+{% endblock %}
