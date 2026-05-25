@@ -1,0 +1,247 @@
+{% extends 'home/base.html' %}
+{% block title %}Checkout - FreshMart{% endblock %}
+
+{% block content %}
+<section class="checkout-style">
+  <div class="checkout-container">
+    <h1 class="checkout-title">Checkout</h1>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="checkout-top">
+
+        <!-- Left: Payment Details -->
+        <div class="checkout-card">
+          <h2 class="section-title">Payment Details</h2>
+          <div class="form-group">
+            {{ form.card_name.label_tag }}
+            {{ form.card_name }}
+          </div>
+          <div class="form-group">
+            {{ form.card_number.label_tag }}
+            {{ form.card_number }}
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              {{ form.expiry_date.label_tag }}
+              {{ form.expiry_date }}
+            </div>
+            <div class="form-group">
+              {{ form.cvv.label_tag }}
+              {{ form.cvv }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Delivery Address -->
+        <div class="checkout-card">
+          <h2 class="section-title">Delivery Address</h2>
+          <div class="form-group">
+            {{ form.full_name.label_tag }}
+            {{ form.full_name }}
+          </div>
+          <div class="form-group">
+            {{ form.address.label_tag }}
+            {{ form.address }}
+          </div>
+          <div class="form-group">
+            {{ form.city.label_tag }}
+            {{ form.city }}
+          </div>
+          <div class="form-group">
+            {{ form.postal_code.label_tag }}
+            {{ form.postal_code }}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom: Order Summary -->
+      <div class="checkout-card order-summary">
+        <h2 class="section-title">Order Summary</h2>
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in cart_items %}
+            <tr>
+              <td>{{ item.product.name }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>${{ item.total }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="order-total">
+          <strong>Total: ${{ total }}</strong>
+        </div>
+        <button type="submit" class="place-order-btn">Place Order</button>
+      </div>
+
+    </form>
+  </div>
+</section>
+
+<style>
+  .checkout-style {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 80vh;
+    padding: 2rem 1rem;
+    background-color: var(--bg-color);
+    font-family: var(--font-primary);
+    color: var(--text-color);
+  }
+
+  .checkout-container {
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .checkout-title {
+    color: var(--primary-green);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .checkout-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .checkout-card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .section-title {
+    color: var(--primary-green);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: var(--text-color);
+    font-size: 0.9rem;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-secondary);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  /* Order Summary Table */
+  .order-summary {
+    margin-bottom: 1.5rem;
+  }
+
+  .summary-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    color: var(--text-color);
+  }
+
+  .summary-table thead {
+    background-color: var(--primary-green);
+  }
+
+  .summary-table th {
+    padding: 0.8rem 1rem;
+    text-align: center;
+    color: white;
+    font-weight: 600;
+  }
+
+  .summary-table td {
+    padding: 0.8rem 1rem;
+    text-align: center;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+  }
+
+  .order-total {
+    text-align: right;
+    font-size: 1.3rem;
+    color: var(--primary-green);
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 2px solid var(--border-color);
+  }
+
+  .place-order-btn {
+    display: block;
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 0.85rem;
+    background-color: var(--primary-green);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: var(--font-primary);
+    transition: all 0.3s ease;
+  }
+
+  .place-order-btn:hover {
+    background-color: var(--secondary-green);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  }
+
+  @media (max-width: 768px) {
+    .checkout-top {
+      grid-template-columns: 1fr;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+{% endblock %}

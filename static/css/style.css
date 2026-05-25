@@ -41,6 +41,9 @@ body.dark-mode {
     
 }
 
+body.dark-mode .product-info-section h1,body.dark-mode .disciption {
+    color: white;
+}
 * {
     margin: 0;
     padding: 0;

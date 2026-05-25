@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from product.models import Product
-from .models import Cart, CartItem
+from .forms import CheckoutForm
+from .models import Cart, CartItem, Order
 
 def cart_view(request):
     # Get cart from session (or empty dict)
@@ -139,3 +140,62 @@ def cart_detail(request):
         'total': total,
     }
     return render(request, 'cart/cart_detail.html', context)
+
+def checkout(request):
+    # Build cart items and total
+    if request.user.is_authenticated:
+        cart = Cart.objects.filter(user=request.user, is_active=True).first()
+        if cart:
+            cart_items = CartItem.objects.filter(cart=cart)
+            for item in cart_items:
+                item.total = item.get_total_price()
+            total = cart.get_total_price()
+        else:
+            cart_items = []
+            total = 0
+    else:
+        session_cart = request.session.get('cart', {})
+        cart_items = []
+        for product_id, quantity in session_cart.items():
+            product = get_object_or_404(Product, id=product_id)
+            item_total = product.price * quantity
+            cart_items.append({
+                'product': product,
+                'quantity': quantity,
+                'total': item_total,
+            })
+        total = sum(item['total'] for item in cart_items)
+
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            Order.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                full_name=form.cleaned_data['full_name'],
+                address=form.cleaned_data['address'],
+                city=form.cleaned_data['city'],
+                postal_code=form.cleaned_data['postal_code'],
+                card_name=form.cleaned_data['card_name'],
+                card_number=form.cleaned_data['card_number'],
+                expiry_date=form.cleaned_data['expiry_date'],
+                total_price=total
+            )
+            # Clear the cart after order
+            if request.user.is_authenticated:
+                Cart.objects.filter(user=request.user, is_active=True).update(is_active=False)
+            else:
+                request.session['cart'] = {}
+
+            return redirect('cart:order_success')
+    else:
+        form = CheckoutForm()
+
+    return render(request, 'cart/checkout.html', {
+        'form': form,
+        'cart_items': cart_items,
+        'total': total
+    })
+
+
+def order_success(request):
+    return render(request, 'cart/order_success.html')

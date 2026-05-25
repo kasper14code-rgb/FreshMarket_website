@@ -1,0 +1,10 @@
+{% extends 'home/base.html' %}
+{% block title %}Order Placed - FreshMart{% endblock %}
+
+{% block content %}
+<div class="container" style="text-align:center; padding: 50px;">
+  <h1>🎉 Order Placed Successfully!</h1>
+  <p>Thank you for shopping with FreshMart.</p>
+  <a href="{% url 'home:index' %}" class="btn btn-primary">Continue Shopping</a>
+</div>
+{% endblock %}
